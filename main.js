@@ -1,4 +1,18 @@
 const { app, BrowserWindow, nativeTheme } = require('electron')
+const sqlite3 = require('sqlite3').verbose(); 
+const path = require('path');
+
+
+//conecção com o db
+const db = new sqlite3.Database(path.join(__dirname, './src/public/BD/database.db'), (err) =>{
+if (err){
+  console.error('Database connection failedd:', err); 
+} 
+else {
+  console.log('Database connected!'); 
+}
+});
+
 
 // cria a janela index
 const createWindow = () => {
