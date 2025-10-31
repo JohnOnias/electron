@@ -1,0 +1,75 @@
+*{
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+    width: 100vw;
+}
+.leftSide{
+    height: 100vh;
+    width: 50vw;
+}
+.leftSide > img{
+    height: 100vh;
+    width: 50vw;
+
+}
+.centralizeRight{
+    height: 65vh;
+     display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+.rightSide{
+    height: 100vh;
+    width: 50vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+   
+}
+.divimg{
+    padding: 0;
+    width: 25vw;
+    height: 20vh;
+    text-align: center;
+}
+.divimg > img{
+    height: 15vh;
+    width: 8.5vw;
+}
+#form{
+    display: flex;
+    flex-direction: column;
+    height: 45vh;
+    width: 38vw;
+    align-items: center;
+}
+button{
+    margin-top: 5px;
+    height: 5vh;
+    width: 12vw;
+    background-color: rgb(255, 248, 116);
+    border-radius: 10px;
+    margin-bottom: 15px;
+    color: black;
+}
+input{
+    height: 3.6vh;
+    width: 20vw;
+    border-radius: 6px;
+    background-color: white;
+    margin-bottom: 10px;
+    text-indent: 5px;
+}
+input::placeholder{
+   color: black;
+}
