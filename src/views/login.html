@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'">
+
+    <title>Login</title>
+    <link rel="stylesheet" href="../public/css/loginStyle.css">
+   
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="leftSide">
+            <img src="../public/img/Rectangle.png" alt="imagem de pratos suculentos a esquerda">
+        </div>
+
+        <div class="rightSide">
+            <div class="centralizeRight">
+                <div class="divimg">
+                <img src="../public/img/Group.png" alt="perfil icone">
+            </div>
+
+                <div id="form">
+                    <input placeholder="Email" type="text" id="email" name="email" required >
+                    <input placeholder="Senha" type="password" name="senha" id="senha" required min="8" maxlength="150">
+                    <button id="entrar">Entrar</button>
+                    <a href="#" id="esqueci">Esqueci minha senha!</a>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+   <script src="rendererLogin.js"></script>
+</html>

@@ -10,10 +10,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^38.2.0"
+    "electron": "^38.4.0"
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
     "sqlite3": "^5.1.7"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohnOnias/electron.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JohnOnias/electron/issues"
+  },
+  "homepage": "https://github.com/JohnOnias/electron#readme"
 }
