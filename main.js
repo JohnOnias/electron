@@ -2,8 +2,7 @@ const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const {session } = require('electron');
-
-
+const { rejects } = require('assert');
 
 // conexão com o banco de dados
 function conn() {
@@ -50,10 +49,34 @@ async function loginAuth(email, senha) {
         });
     });
 }
+// função para redefinir senha 
+async function RedefinirSenha(email) {
+    const db = await conn(); 
+    return new Promise((reselve, reject) => {
+            const query  = `    SELECT 'Administrador' as tipo, email 
+                                FROM tb_Administrador
+                                WHERE email = ?
 
+                                UNION ALL
 
+                                SELECT 'Funcionario' as tipo, email 
+                                FROM tb_Funcionarios 
+                                WHERE email = ?
+                                `;
+        db.all(query, [email, email], (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+            db.close();
+            
+        });
+    })
+    
+}
 
-// finção pra criar as telas cria as telas(pfv não toque nisso)
+//cria as telas(pfv não toque nisso)
 const createWindow = () => {
     nativeTheme.themeSource = 'dark'
   const win = new BrowserWindow({
@@ -70,7 +93,7 @@ const createWindow = () => {
   win.loadFile('./src/views/index.html')
 }
 
-// função pra criar a tela de login 
+//cria a tela de login 
 const loginWindow = () => {
     nativeTheme.themeSource = 'dark';
     const login = new BrowserWindow({
@@ -85,10 +108,46 @@ const loginWindow = () => {
     });
     login.loadFile('./src/views/login.html');
 }
+// cria a tela de redefinirSenha
+async function criarTelaRedefinir() {
+
+        nativeTheme.themeSource = 'dark';
+        const redefinirWindow = new BrowserWindow ({
+            width: 450, 
+            height: 450, 
+            resizable: false, 
+            autoHideMenuBar: true,
+        webPreferences: {
+                preload: path.join(__dirname, 'preload.js'),
+                contextIsolation: true, 
+                nodeIntegration: false
+            }
+        })
+        redefinirWindow.loadFile('./src/views/reset.html');
+        // limpa a referencia
+        redefinirWindow.on('closed', () => {
+            redefinirWindow = null;
+        });
+        return redefinirWindow; 
+    }
+
+// abrir a tela de redefinirSenha
+ipcMain.handle('abrirRedefinir', async (event) => {
+    return await criarTelaRedefinir();
+});
+// fecha a tela redefinirSenha
+ipcMain.handle('fecharRedefinir', async (event) => {
+  if (redefinirWindow) {
+    redefinirWindow.close();
+  }
+})
+
+
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
   loginWindow(); 
+ 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
  app.on('activate', () => {

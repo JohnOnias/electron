@@ -1,6 +1,7 @@
 const btn = document.querySelector('#entrar');
 
 btn.addEventListener("click", async () => {
+
     const email = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
 
@@ -8,8 +9,7 @@ btn.addEventListener("click", async () => {
         const usuario = await window.api.login(email, senha);
 
         console.log('Resposta do main:', usuario);
-        //alert('Resposta completa:\n' + JSON.stringify(usuario, null, 2));
-
+        
         if (usuario.length > 0) {
             alert('Login bem-sucedido: ' + JSON.stringify(usuario[0]));
         } else {
@@ -21,4 +21,14 @@ btn.addEventListener("click", async () => {
         alert('Erro no login: ' + error);
     }
 });
+
+
+document.addEventListener('DOMContentLoaded', () =>{
+    const esqueciAsenha = document.getElementById('esqueci');
+
+    esqueciAsenha.addEventListener('click', () => {
+        window.api.abrirRedefinir(); 
+    })
+
+})
 
