@@ -163,3 +163,44 @@ app.on('window-all-closed', () => {
 ipcMain.handle("login-auth", async (event, email, senha) => {
    return await loginAuth(email, senha);
 });
+
+ipcMain.handle('cadastrar-funcionario', async (event, dados) => {
+    const db = await conn();
+
+    return new Promise((resolve) => {
+        const query = `
+            INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        db.run(query, [dados.nome, dados.cpf, dados.email, dados.senha, dados.tipoFuncionario], function(err){
+            if(err){
+                resolve({ success: false, error: err.message });
+            } else {
+                resolve({ success: true });
+            }
+            db.close();
+        });
+    });
+});
+
+async function criarTelaCadastroFuncionario() {
+    const win = new BrowserWindow({
+        width: 450,
+        height: 550,
+        resizable: false,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: true
+        }
+    });
+
+    win.loadFile('./src/views/cadastroFuncionario.html');
+}
+
+ipcMain.handle('abrirCadastroFuncionario', async () => {
+    return await criarTelaCadastroFuncionario();
+});
+
+
