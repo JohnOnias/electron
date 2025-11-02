@@ -10,8 +10,9 @@ btn.addEventListener("click", async () => {
 
         console.log('Resposta do main:', usuario);
         
-        if (usuario.length > 0) {
-            alert('Login bem-sucedido: ' + JSON.stringify(usuario[0]));
+        if (usuario) {
+            alert('Login bem-sucedido!');
+
         } else {
             alert('Email ou senha incorretos');
         }
@@ -20,15 +21,27 @@ btn.addEventListener("click", async () => {
         console.error('Erro ao chamar login:', error);
         alert('Erro no login: ' + error);
     }
+    if(usuario.tipo === "adm"){
+
+        // quando Jotinha terminar o painel chamar aqui
+
+    }
+    if(usuario.tipo === "gerente"){
+         // quando Jotinha terminar o painel chamar aqui
+    }
+    else{
+
+        // chamar o painel de garçom
+
+    }
+
+});
+document.addEventListener('DOMContentLoaded', () =>{
+    const esqueciAsenha = document.getElementById('esqueci');
+    esqueciAsenha.addEventListener('click', () => {
+        window.api.abrirReset(); 
+    })
 });
 
 
-document.addEventListener('DOMContentLoaded', () =>{
-    const esqueciAsenha = document.getElementById('esqueci');
-
-    esqueciAsenha.addEventListener('click', () => {
-        window.api.abrirRedefinir(); 
-    })
-
-})
 

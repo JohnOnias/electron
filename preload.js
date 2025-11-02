@@ -1,11 +1,15 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("api", {
-    login: (email, senha) => ipcRenderer.invoke("login-auth", email, senha), 
-    chamarReset: ( emailRedefinir) => ipcRenderer.invoke("chamar-redefinir", emailRedefinir),
-     abrirRedefinir: () => ipcRenderer.invoke('abrirRedefinir'),
-    fecharRedefinir: () => ipcRenderer.invoke('recharRedefinir')
-
+    login: (email, senha) => ipcRenderer.invoke("login-auth", email, senha),
+    chamarReset: (emailResetTest) => ipcRenderer.invoke("chamar-redefinir", emailResetTest),
+    abrirReset: () => ipcRenderer.invoke('abrirResetTela'),
+    fecharReset: () => ipcRenderer.invoke('fecharReset'),
+    gerarToken: (email) => ipcRenderer.invoke("gerar-token", email),
+    gerarEEnviarToken: (email) => ipcRenderer.invoke("gerar-e-enviar-token", email), 
+    validarToken: (token) => ipcRenderer.invoke("validar-token", token),
+    resetarSenha: (token, novaSenha) => ipcRenderer.invoke("resetar-senha", token, novaSenha),
+    abrirTelaDeVerificacaoToken: () => ipcRenderer.invoke("abrirTelaDeVerificacaoToken")
 
 
 });

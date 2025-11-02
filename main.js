@@ -3,6 +3,134 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const {session } = require('electron');
 const { rejects } = require('assert');
+const crypto = require("crypto");
+const nodemailer = require("nodemailer");
+const bcrypt = require("bcryptjs");
+
+
+
+// ################################################## envio de emails #################################################################
+
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "ifce.electron.testes@gmail.com",       // seu e-mail
+        pass: "gnfedrphwmaaewiv"      // senha de app do Gmail
+    }
+});
+
+async function enviarTokenEmail(email, token) {
+    const mailOptions = {
+        from: '"App Recuperação de Senha" ifce.electron.testes@gmail.com',
+        to: email,
+        subject: "Recuperação de Senha",
+        html: `
+            <p>Você solicitou a redefinição de senha.</p>
+            <p>Use este token para redefinir sua senha:</p>
+            <h3>${token}</h3>
+            <p>O token expira em 15 minutos.</p>
+        `
+    };
+
+    return transporter.sendMail(mailOptions);
+}
+
+
+
+//################################################# geração de tokens ######################################################
+// gera o token de reset
+function gerarToken() {
+    return crypto.randomBytes(32).toString("hex"); // token de 64 caracteres
+}
+function calcularExpiracao(minutos = 15) {
+    return Date.now() + minutos * 60 * 1000; // expira em X minutos
+}
+
+// ##################################################### validar tokens ########################################################
+
+async function validarToken(token) {
+    const db = await conn();
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT 'Administrador' as tipo, id, reset_expires 
+            FROM tb_Administrador 
+            WHERE reset_token = ?
+            
+            UNION ALL
+            
+            SELECT 'Funcionario' as tipo, id, reset_expires 
+            FROM tb_Funcionarios 
+            WHERE reset_token = ?
+        `;
+        db.all(query, [token, token], (err, rows) => {
+            db.close();
+            if (err) return reject(err);
+            if (!rows || rows.length === 0) return resolve(null); // token não existe
+            const usuario = rows[0];
+            if (usuario.reset_expires < Date.now()) return resolve(null); // token expirado
+            resolve(usuario); // token válido
+        });
+    });
+}
+// ##################################################### FUNÇOES #########################################################################################
+
+// atualiza a senha
+async function atualizarSenha(token, novaSenha) {
+    const db = await conn();
+    const usuario = await validarToken(token);
+    if (!usuario) return null;
+
+    const hashed = await bcrypt.hash(novaSenha, 10);
+
+    return new Promise((resolve, reject) => {
+        let table = usuario.tipo === "Administrador" ? "tb_Administrador" : "tb_Funcionarios";
+        db.run(
+            `UPDATE ${table} SET senha=?, reset_token=NULL, reset_expires=NULL WHERE id=?`,
+            [hashed, usuario.id],
+            function(err) {
+                db.close();
+                if (err) return reject(err);
+                resolve(true);
+            }
+        );
+    });
+}
+
+// salva o token no banco
+async function salvarToken(email) {
+    const db = await conn();
+    const token = gerarToken();
+    const expiracao = calcularExpiracao(15);
+
+    return new Promise((resolve, reject) => {
+        // Atualiza token no Administrador
+        db.run(
+            `UPDATE tb_Administrador SET reset_token=?, reset_expires=? WHERE email=?`,
+            [token, expiracao, email],
+            function (err) {
+                if (err) {
+                    // Se não encontrar, tenta Funcionario
+                    db.run(
+                        `UPDATE tb_Funcionarios SET reset_token=?, reset_expires=? WHERE email=?`,
+                        [token, expiracao, email],
+                        function (err2) {
+                            db.close();
+                            if (err2) reject(err2);
+                            else resolve({ token, expiracao });
+                        }
+                    );
+                } else if (this.changes === 0) {
+                    // nenhum registro atualizado
+                    db.close();
+                    resolve(null);
+                } else {
+                    db.close();
+                    resolve({ token, expiracao });
+                }
+            }
+        );
+    });
+}
 
 // conexão com o banco de dados
 function conn() {
@@ -21,60 +149,102 @@ function conn() {
         );
     });
 }
-// função de login e auth
-async function loginAuth(email, senha) {
-    const db = await conn();
 
+// função de login e auth
+async function loginAuth(email, senhaDigitada) {
+  const db = await conn();
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT 'adm' as tipo, id, nome, email, senha
+      FROM tb_Administrador
+      WHERE email = ?
+      UNION ALL
+      SELECT 'funcionario' as tipo, id, nome, email, senha
+      FROM tb_Funcionarios
+      WHERE email = ?
+      LIMIT 1
+    `;
+    db.all(query, [email, email], async (err, rows) => {
+      db.close();
+      if (err) return reject(err);
+      if (!rows || rows.length === 0) return resolve(null); // usuário não encontrado
+
+      const usuario = rows[0]; // pega o primeiro resultado
+      try {
+        const senhaValida = await bcrypt.compare(senhaDigitada, usuario.senha);
+        if (!senhaValida) return resolve(null); // senha incorreta
+
+        // Não envie o hash para o renderer
+        const retorno = {
+          tipo: usuario.tipo, // 'adm' ou 'funcionario'
+          id: usuario.id,
+          nome: usuario.nome,
+          email: usuario.email
+        };
+        return resolve(retorno);
+      } catch (e) {
+        return reject(e);
+      }
+    });
+  });
+}
+
+
+// função para redefinir senha 
+async function verificarEmail(emailResetTest) {
+    const db = await conn();
     return new Promise((resolve, reject) => {
         const query = `
-            SELECT 'adm' as tipo, id, nome, email 
-            FROM tb_Administrador 
-            WHERE email = ? AND senha = ?
-            
-            UNION ALL  
-            
-            SELECT 'funcionario' as tipo, id, nome, email 
+            SELECT 'Administrador' as tipo, email 
+            FROM tb_Administrador
+            WHERE email = ?
+            UNION ALL
+            SELECT 'Funcionario' as tipo, email 
             FROM tb_Funcionarios 
-            WHERE email = ? AND senha = ?
+            WHERE email = ?
         `;
-        
-        db.all(query, [email, senha, email, senha], (err, rows) => {
+        db.all(query, [emailResetTest, emailResetTest], (err, rows) => {
+            db.close(); 
+
             if (err) {
+                console.error('Erro ao consultar email:', err);
                 reject(err);
             } else {
+                if (rows.length > 0) {
+                    console.log('Email encontrado!');      
+                }
                 resolve(rows);
             }
-            db.close();
-            
         });
     });
 }
-// função para redefinir senha 
-async function RedefinirSenha(email) {
-    const db = await conn(); 
-    return new Promise((reselve, reject) => {
-            const query  = `    SELECT 'Administrador' as tipo, email 
-                                FROM tb_Administrador
-                                WHERE email = ?
 
-                                UNION ALL
-
-                                SELECT 'Funcionario' as tipo, email 
-                                FROM tb_Funcionarios 
-                                WHERE email = ?
-                                `;
-        db.all(query, [email, email], (err, rows) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(rows);
+let resetWindow = null; 
+// cria a tela de redefinirSenha
+async function criarTelaReset() {
+        nativeTheme.themeSource = 'dark';
+        const resetWindow = new BrowserWindow ({
+            width: 450, 
+            height: 450, 
+            resizable: false, 
+            autoHideMenuBar: true,
+        webPreferences: {
+                preload: path.join(__dirname, 'preload.js'),
+                contextIsolation: true, 
+                nodeIntegration: false
             }
-            db.close();
-            
+        })
+        resetWindow.loadFile('./src/views/ForgotPassword.html');
+
+        resetWindow.on('closed', () => {
+                resetWindow = null;
         });
-    })
-    
+
+        return resetWindow; 
 }
+
+    
+// ######################################### CRIAÇÃO DE TELAS ################################################################
 
 //cria as telas(pfv não toque nisso)
 const createWindow = () => {
@@ -108,46 +278,10 @@ const loginWindow = () => {
     });
     login.loadFile('./src/views/login.html');
 }
-// cria a tela de redefinirSenha
-async function criarTelaRedefinir() {
-
-        nativeTheme.themeSource = 'dark';
-        const redefinirWindow = new BrowserWindow ({
-            width: 450, 
-            height: 450, 
-            resizable: false, 
-            autoHideMenuBar: true,
-        webPreferences: {
-                preload: path.join(__dirname, 'preload.js'),
-                contextIsolation: true, 
-                nodeIntegration: false
-            }
-        })
-        redefinirWindow.loadFile('./src/views/reset.html');
-        // limpa a referencia
-        redefinirWindow.on('closed', () => {
-            redefinirWindow = null;
-        });
-        return redefinirWindow; 
-    }
-
-// abrir a tela de redefinirSenha
-ipcMain.handle('abrirRedefinir', async (event) => {
-    return await criarTelaRedefinir();
-});
-// fecha a tela redefinirSenha
-ipcMain.handle('fecharRedefinir', async (event) => {
-  if (redefinirWindow) {
-    redefinirWindow.close();
-  }
-})
-
-
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
   loginWindow(); 
- 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
  app.on('activate', () => {
@@ -159,7 +293,82 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 });
-// rota de login
+
+
+
+
+
+// ######################################################### ROTAS #########################################################################
+
 ipcMain.handle("login-auth", async (event, email, senha) => {
-   return await loginAuth(email, senha);
+  return loginAuth(email, senha); 
 });
+
+ipcMain.handle("abrirResetTela", async () => {
+    if (!resetWindow) await criarTelaReset();
+});
+ipcMain.handle("fecharResetTela", async () => {
+    if (resetWindow) {
+        resetWindow.close();
+        resetWindow = null;
+    }
+});
+ipcMain.handle("chamar-redefinir", async(event, emailResetTest) => {
+   return await verificarEmail(emailResetTest);
+});
+
+// abre a tela de verificação de token
+let abrirTelaDeVerificacaoToken = null; 
+ipcMain.handle("abrirTelaDeVerificacaoToken", async() => {
+if(!abrirTelaDeVerificacaoToken){
+     nativeTheme.themeSource = 'dark';
+        abrirTelaDeVerificacaoToken = new BrowserWindow ({
+            width: 450, 
+            height: 450, 
+            resizable: false, 
+            autoHideMenuBar: true,
+        webPreferences: {
+                preload: path.join(__dirname, 'preload.js'),
+                contextIsolation: true, 
+                nodeIntegration: false
+            }
+        })
+        abrirTelaDeVerificacaoToken.loadFile('./src/views/reset.html');
+        abrirTelaDeVerificacaoToken.on('closed', () => {
+                abrirTelaDeVerificacaoToken = null;
+        });
+}
+});
+
+ipcMain.handle("gerar-token", async (event, email) => {
+    const resultado = await salvarToken(email);
+    if (resultado) {
+        console.log("Token gerado para:", email);
+    }
+    return resultado; 
+});
+ipcMain.handle("gerar-e-enviar-token", async (event, email) => {
+    const resultado = await salvarToken(email); // gera token e salva no DB
+    if (!resultado) return null;
+
+    try {
+        await enviarTokenEmail(email, resultado.token);
+        console.log("Token enviado para o e-mail:", email);
+        return { sucesso: true };
+    } catch (err) {
+        console.error("Erro ao enviar e-mail:", err);
+        return { sucesso: false, erro: err.message };
+    }
+});
+
+ipcMain.handle("validar-token", async (event, token) => {
+    const usuario = await validarToken(token);
+    return usuario ? true : false;
+});
+
+ipcMain.handle("resetar-senha", async (event, token, novaSenha) => {
+    const sucesso = await atualizarSenha(token, novaSenha);
+    return sucesso;
+});
+
+
