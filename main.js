@@ -457,8 +457,8 @@ ipcMain.handle("resetar-senha", async (event, token, novaSenha) => {
 
 // abrir tela de cadastro funcionario
 ipcMain.handle("abrirCadastroFuncionario", async(event)=>{
-        const abrir = await criarTelaCadastroFuncionario(); 
-        return abrir; 
+       await criarTelaCadastroFuncionario(); 
+        
 });
 
 

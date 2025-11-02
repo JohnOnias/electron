@@ -1,6 +1,7 @@
 const btn = document.querySelector('#entrar');
 
-btn.addEventListener("click", async () => {
+btn.addEventListener("click", async (event) => {
+    event.preventDefault(); 
     const email = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
 
