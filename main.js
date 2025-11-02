@@ -7,6 +7,10 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
 
+//######################################################## variaveis globais ##################################################
+let loginWindow = null; 
+let resetWindow = null;
+let tokenWindow = null;
 
 
 // ################################################## envio de emails #################################################################
@@ -16,8 +20,7 @@ const transporter = nodemailer.createTransport({
     auth: {
         user: "ifce.electron.testes@gmail.com",       // seu e-mail
         pass: "gnfedrphwmaaewiv"      // senha de app do Gmail
-    }
-});
+    }});
 
 async function enviarTokenEmail(email, token) {
     const mailOptions = {
@@ -30,9 +33,7 @@ async function enviarTokenEmail(email, token) {
             <h3>${token}</h3>
             <p>O token expira em 15 minutos.</p>
         `
-    };
-
-    return transporter.sendMail(mailOptions);
+    }; return transporter.sendMail(mailOptions);
 }
 
 
@@ -45,6 +46,7 @@ function gerarToken() {
 function calcularExpiracao(minutos = 15) {
     return Date.now() + minutos * 60 * 1000; // expira em X minutos
 }
+
 
 // ##################################################### validar tokens ########################################################
 
@@ -74,14 +76,13 @@ async function validarToken(token) {
 }
 // ##################################################### FUNÇOES #########################################################################################
 
+
 // atualiza a senha
 async function atualizarSenha(token, novaSenha) {
     const db = await conn();
     const usuario = await validarToken(token);
     if (!usuario) return null;
-
     const hashed = await bcrypt.hash(novaSenha, 10);
-
     return new Promise((resolve, reject) => {
         let table = usuario.tipo === "Administrador" ? "tb_Administrador" : "tb_Funcionarios";
         db.run(
@@ -91,10 +92,7 @@ async function atualizarSenha(token, novaSenha) {
                 db.close();
                 if (err) return reject(err);
                 resolve(true);
-            }
-        );
-    });
-}
+            });});}
 
 // salva o token no banco
 async function salvarToken(email) {
@@ -126,11 +124,7 @@ async function salvarToken(email) {
                 } else {
                     db.close();
                     resolve({ token, expiracao });
-                }
-            }
-        );
-    });
-}
+                }});});}
 
 // conexão com o banco de dados
 function conn() {
@@ -143,12 +137,7 @@ function conn() {
                     reject(err);
                 } else {
                     console.log('Database connected!'); 
-                    resolve(db);
-                }
-            }
-        );
-    });
-}
+                    resolve(db);}});});}
 
 // função de login e auth
 async function loginAuth(email, senhaDigitada) {
@@ -159,7 +148,7 @@ async function loginAuth(email, senhaDigitada) {
       FROM tb_Administrador
       WHERE email = ?
       UNION ALL
-      SELECT 'funcionario' as tipo, id, nome, email, senha
+      SELECT id, nome, tipo, email, senha
       FROM tb_Funcionarios
       WHERE email = ?
       LIMIT 1
@@ -176,7 +165,7 @@ async function loginAuth(email, senhaDigitada) {
 
         // Não envie o hash para o renderer
         const retorno = {
-          tipo: usuario.tipo, // 'adm' ou 'funcionario'
+          tipo: usuario.tipo, // 'adm', 'gerente' ou 'garçom'
           id: usuario.id,
           nome: usuario.nome,
           email: usuario.email
@@ -220,7 +209,6 @@ async function verificarEmail(emailResetTest) {
     });
 }
 
-let resetWindow = null; 
 // cria a tela de redefinirSenha
 async function criarTelaReset() {
         nativeTheme.themeSource = 'dark';
@@ -243,31 +231,58 @@ async function criarTelaReset() {
 
         return resetWindow; 
 }
+
 // função cadastrar funcionario 
-async function  cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
-     const db = await conn();
-    return new Promise((resolve) => {
-        const query = `
-            INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
-            VALUES (?, ?, ?, ?, ?)
-        `;
-        db.run(query, [nome, cpf, email, senha, tipoFuncionario], function(err){
-            if(err){
-                resolve({ success: false, error: err.message });
-            } else {
-                resolve({ success: true });
-            }
-            db.close();
-        });
+async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
+  const db = await conn();
+  if (tipoFuncionario === "gerente") {
+    const gerente = await verificarGerente(tipoFuncionario);
+    if (gerente.length > 0) {
+      return { success: false, error: "Já existe um gerente cadastrado!"}; 
+    }
+  }
+  return new Promise((resolve) => {
+    const query = `
+      INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    db.run(query, [nome, cpf, email, senha, tipoFuncionario], function (err) {
+      if (err) {
+        resolve({ success: false, error: err.message });
+      } else {
+        resolve({ success: true });
+      }
+      db.close();
     });
+  });
 }
-    
+
+// verifica se existe um gerente cadastrado 
+async function verificarGerente(tipoFuncionario) {
+  const db = await conn();
+  return new Promise((resolve, reject) => {
+    const query = `SELECT id, nome FROM tb_Funcionarios WHERE tipo = ?`
+    db.all(query, [tipoFuncionario], (err, rows) => {
+      db.close();
+      if (err) {
+        console.error("Erro ao pesquisar gerente", err);
+        reject(err);
+        return;
+      }
+      resolve(rows); 
+    });
+  });
+}
+
+
+
 // ######################################### CRIAÇÃO DE TELAS ################################################################
 
+
 //cria a tela de login 
-const loginWindow = () => {
+async function criarLoginWindow() {
     nativeTheme.themeSource = 'dark';
-    const login = new BrowserWindow({
+    loginWindow = new BrowserWindow({  // ← Atribui à variável global
         width: 1920,
         height: 1080,
         resizable: true,
@@ -277,10 +292,54 @@ const loginWindow = () => {
             nodeIntegration: false
         }
     });
-    login.loadFile('./src/views/login/login.html');
+
+    loginWindow.loadFile('./src/views/login/login.html');
+    
+    // Evento para limpar a referência quando a janela fechar
+    loginWindow.on('closed', () => {
+        loginWindow = null;
+    });
+    
+    return loginWindow; 
 }
 
- function criarTelaCadastroFuncionario() {
+// criar tela de ADM
+let adm = null;  
+async function admWindow(){
+    nativeTheme.themeSource = 'dark';
+    const adm = new BrowserWindow({
+        width: 1920,
+        height: 1080,
+        resizable: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true, 
+            nodeIntegration: false
+        }
+    });
+    adm.loadFile('./src/views/admin/admin.html');
+    return adm; 
+}
+// criar a tela de cadastro de funcionario 
+function criarTelaCadastroFuncionario() {
+    nativeTheme.themeSource = 'dark';
+    const win = new BrowserWindow({
+        width: 350,
+        height: 550,
+        resizable: false,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: false // ← Mude para false por segurança
+        }
+    });
+
+    win.loadFile('./src/views/admin/cadastroFuncionario.html');
+    return win; 
+}
+
+function criarTelaGerente() {
     nativeTheme.themeSource = 'dark';
     const win = new BrowserWindow({
         width: 1920,
@@ -293,9 +352,7 @@ const loginWindow = () => {
             nodeIntegration: true
         }
     });
-
-    win.loadFile('./src/views/admin/cadastroFuncionario.html');
-
+    win.loadFile('./src/views/gerente/gerente.html'); 
 }
 
 function criarTelaGerente() {
@@ -332,12 +389,11 @@ function criarTelaCadastroCategoria() {
 
 
 
+
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
   loginWindow(); 
-  criarTelaCadastroFuncionario();
-  criarTelaCadastroCategoria();
-  
+ 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
  app.on('activate', () => {
@@ -353,25 +409,41 @@ app.on('window-all-closed', () => {
 
 
 
+
+
 // ######################################################### ROTAS #########################################################################
 
+
+// login auth 
 ipcMain.handle("login-auth", async (event, email, senha) => {
    return await loginAuth(email, senha);
 });
 
+// fechar login sa desgraça 
+ipcMain.handle("fecharLogin", async () => {
+    if (loginWindow && !loginWindow.isDestroyed()) {
+        loginWindow.close();
+        loginWindow = null;
+        return { success: true, message: 'Janela de login fechada' };
+    }
+    return { success: false, message: 'Janela de login não encontrada' };
+});
+// cadastrar funcionario
 ipcMain.handle('cadastrar-funcionario', async (event, nome, cpf, email, senha, tipoFuncionario) => {
     return await cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario);
 });
-
+// abrir tela de reset
 ipcMain.handle("abrirResetTela", async () => {
     if (!resetWindow) await criarTelaReset();
 });
+// fechar tela de reset
 ipcMain.handle("fecharResetTela", async () => {
     if (resetWindow) {
         resetWindow.close();
         resetWindow = null;
     }
 });
+// chama o redefinir
 ipcMain.handle("chamar-redefinir", async(event, emailResetTest) => {
    return await verificarEmail(emailResetTest);
 });
@@ -400,6 +472,7 @@ if(!abrirTelaDeVerificacaoToken){
 }
 });
 
+// gera token de verificação
 ipcMain.handle("gerar-token", async (event, email) => {
     const resultado = await salvarToken(email);
     if (resultado) {
@@ -407,6 +480,7 @@ ipcMain.handle("gerar-token", async (event, email) => {
     }
     return resultado; 
 });
+// enviar token por email
 ipcMain.handle("gerar-e-enviar-token", async (event, email) => {
     const resultado = await salvarToken(email); // gera token e salva no DB
     if (!resultado) return null;
@@ -421,11 +495,13 @@ ipcMain.handle("gerar-e-enviar-token", async (event, email) => {
     }
 });
 
+// valida o token 
 ipcMain.handle("validar-token", async (event, token) => {
     const usuario = await validarToken(token);
     return usuario ? true : false;
 });
 
+// atualiza a senha para a senha nova
 ipcMain.handle("resetar-senha", async (event, token, novaSenha) => {
     const sucesso = await atualizarSenha(token, novaSenha);
     return sucesso;
@@ -451,5 +527,3 @@ ipcMain.handle('cadastrar-categoria', async (event, nomeCategoria, status) => {
         });
     });
 });
-
-

@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld("api", {
     login: (email, senha) => ipcRenderer.invoke("login-auth", email, senha),
 
     // Redefinir senha
+    fecharLogin: () => ipcRenderer.invoke('fecharLogin'),
     chamarReset: (emailResetTest) => ipcRenderer.invoke("chamar-redefinir", emailResetTest),
     abrirReset: () => ipcRenderer.invoke('abrirResetTela'),
     fecharReset: () => ipcRenderer.invoke('fecharResetTela'),
@@ -18,6 +19,8 @@ contextBridge.exposeInMainWorld("api", {
     cadastrarFuncionario: (nome, cpf, email, cargo, senha) =>
         ipcRenderer.invoke("cadastrar-funcionario", nome, cpf, email, cargo, senha),
     abrirTelaDeCadastroFuncionario: () => ipcRenderer.invoke("abrirCadastroFuncionario"),
+    abrirTelaAdm: () => ipcRenderer.invoke("abrirTelaAdm")
+   ,
 
     // Categoria
     cadastrarCategoria: (nomeCategoria, status) =>
