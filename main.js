@@ -283,8 +283,8 @@ const loginWindow = () => {
  function criarTelaCadastroFuncionario() {
     nativeTheme.themeSource = 'dark';
     const win = new BrowserWindow({
-        width: 1920,
-        height: 1080,
+        width: 350,
+        height: 550,
         resizable: false,
         autoHideMenuBar: true,
         webPreferences: {
@@ -302,6 +302,7 @@ const loginWindow = () => {
 app.whenReady().then(() => {
   loginWindow(); 
   criarTelaCadastroFuncionario();
+  
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
  app.on('activate', () => {
