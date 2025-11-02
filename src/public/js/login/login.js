@@ -23,7 +23,7 @@ btn.addEventListener("click", async () => {
     }
     if(usuario.tipo === "adm"){
 
-        // quando Jotinha terminar o painel chamar aqui
+        await window.api.abrirTelaDeCadastroFuncionario();
 
     }
     if(usuario.tipo === "gerente"){

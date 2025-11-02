@@ -190,6 +190,7 @@ async function loginAuth(email, senhaDigitada) {
 }
 
 
+
 // função para redefinir senha 
 async function verificarEmail(emailResetTest) {
     const db = await conn();
@@ -234,7 +235,7 @@ async function criarTelaReset() {
                 nodeIntegration: false
             }
         })
-        resetWindow.loadFile('./src/views/ForgotPassword.html');
+        resetWindow.loadFile('./src/views/login/ForgotPassword.html');
 
         resetWindow.on('closed', () => {
                 resetWindow = null;
@@ -242,26 +243,26 @@ async function criarTelaReset() {
 
         return resetWindow; 
 }
-
+// função cadastrar funcionario 
+async function  cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
+     const db = await conn();
+    return new Promise((resolve) => {
+        const query = `
+            INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        db.run(query, [nome, cpf, email, senha, tipoFuncionario], function(err){
+            if(err){
+                resolve({ success: false, error: err.message });
+            } else {
+                resolve({ success: true });
+            }
+            db.close();
+        });
+    });
+}
     
 // ######################################### CRIAÇÃO DE TELAS ################################################################
-
-//cria as telas(pfv não toque nisso)
-const createWindow = () => {
-    nativeTheme.themeSource = 'dark'
-  const win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    resizable: false,
-    autoHideMenuBar: true
-
-    //para adcionar um icone
-    //,
-    //icon: 'local da imagem aqui'
-  })
-     // renderiza a janela 
-  win.loadFile('./src/views/index.html')
-}
 
 //cria a tela de login 
 const loginWindow = () => {
@@ -276,12 +277,31 @@ const loginWindow = () => {
             nodeIntegration: false
         }
     });
-    login.loadFile('./src/views/login.html');
+    login.loadFile('./src/views/login/login.html');
+}
+
+ function criarTelaCadastroFuncionario() {
+    nativeTheme.themeSource = 'dark';
+    const win = new BrowserWindow({
+        width: 1920,
+        height: 1080,
+        resizable: false,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: true
+        }
+    });
+
+    win.loadFile('./src/views/admin/cadastroFuncionario.html');
+
 }
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
   loginWindow(); 
+  criarTelaCadastroFuncionario();
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
  app.on('activate', () => {
@@ -297,11 +317,14 @@ app.on('window-all-closed', () => {
 
 
 
-
 // ######################################################### ROTAS #########################################################################
 
 ipcMain.handle("login-auth", async (event, email, senha) => {
-  return loginAuth(email, senha); 
+   return await loginAuth(email, senha);
+});
+
+ipcMain.handle('cadastrar-funcionario', async (event, nome, cpf, email, senha, tipoFuncionario) => {
+    return await cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario);
 });
 
 ipcMain.handle("abrirResetTela", async () => {
@@ -333,7 +356,7 @@ if(!abrirTelaDeVerificacaoToken){
                 nodeIntegration: false
             }
         })
-        abrirTelaDeVerificacaoToken.loadFile('./src/views/reset.html');
+        abrirTelaDeVerificacaoToken.loadFile('./src/views/login/reset.html');
         abrirTelaDeVerificacaoToken.on('closed', () => {
                 abrirTelaDeVerificacaoToken = null;
         });
@@ -370,5 +393,6 @@ ipcMain.handle("resetar-senha", async (event, token, novaSenha) => {
     const sucesso = await atualizarSenha(token, novaSenha);
     return sucesso;
 });
-
-
+ipcMain.handle('abrirCadastroFuncionario', async () => {
+    return await criarTelaCadastroFuncionario();
+});

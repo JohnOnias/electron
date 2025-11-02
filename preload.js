@@ -9,9 +9,10 @@ contextBridge.exposeInMainWorld("api", {
     gerarEEnviarToken: (email) => ipcRenderer.invoke("gerar-e-enviar-token", email), 
     validarToken: (token) => ipcRenderer.invoke("validar-token", token),
     resetarSenha: (token, novaSenha) => ipcRenderer.invoke("resetar-senha", token, novaSenha),
-    abrirTelaDeVerificacaoToken: () => ipcRenderer.invoke("abrirTelaDeVerificacaoToken")
-
+    abrirTelaDeVerificacaoToken: () => ipcRenderer.invoke("abrirTelaDeVerificacaoToken"),
+    cadastrarFuncionario: (nome, cpf, email, cargo, senha) =>
+    ipcRenderer.invoke("cadastrar-funcionario", nome, cpf, email, cargo, senha),
+    abrirTelaDeCadastroFuncionario: () => ipcRenderer.invoke("abrirCadastroFuncionario")
 
 });
-
 
