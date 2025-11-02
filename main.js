@@ -11,6 +11,8 @@ const bcrypt = require("bcryptjs");
 let loginWindow = null; 
 let resetWindow = null;
 let tokenWindow = null;
+let adm = null;  
+let TelaDeVerificacaoToken = null; 
 
 
 // ################################################## envio de emails #################################################################
@@ -38,7 +40,7 @@ async function enviarTokenEmail(email, token) {
 
 
 
-//################################################# geração de tokens ######################################################
+//################################################# GERAÇÃO DE TOKENS ######################################################
 // gera o token de reset
 function gerarToken() {
     return crypto.randomBytes(32).toString("hex"); // token de 64 caracteres
@@ -48,7 +50,7 @@ function calcularExpiracao(minutos = 15) {
 }
 
 
-// ##################################################### validar tokens ########################################################
+// ##################################################### VALIDAR TOKENS ########################################################
 
 async function validarToken(token) {
     const db = await conn();
@@ -73,27 +75,8 @@ async function validarToken(token) {
             resolve(usuario); // token válido
         });
     });
+    
 }
-// ##################################################### FUNÇOES #########################################################################################
-
-
-// atualiza a senha
-async function atualizarSenha(token, novaSenha) {
-    const db = await conn();
-    const usuario = await validarToken(token);
-    if (!usuario) return null;
-    const hashed = await bcrypt.hash(novaSenha, 10);
-    return new Promise((resolve, reject) => {
-        let table = usuario.tipo === "Administrador" ? "tb_Administrador" : "tb_Funcionarios";
-        db.run(
-            `UPDATE ${table} SET senha=?, reset_token=NULL, reset_expires=NULL WHERE id=?`,
-            [hashed, usuario.id],
-            function(err) {
-                db.close();
-                if (err) return reject(err);
-                resolve(true);
-            });});}
-
 // salva o token no banco
 async function salvarToken(email) {
     const db = await conn();
@@ -126,6 +109,8 @@ async function salvarToken(email) {
                     resolve({ token, expiracao });
                 }});});}
 
+// ################################################### FUNÇOES BANCO DE DADOS #############################################
+
 // conexão com o banco de dados
 function conn() {
     return new Promise((resolve, reject) => {
@@ -137,7 +122,12 @@ function conn() {
                     reject(err);
                 } else {
                     console.log('Database connected!'); 
-                    resolve(db);}});});}
+                    resolve(db);
+}});});}
+
+
+// ##################################################### FUNÇOES LOGIN #########################################################################################
+
 
 // função de login e auth
 async function loginAuth(email, senhaDigitada) {
@@ -178,6 +168,7 @@ async function loginAuth(email, senhaDigitada) {
   });
 }
 
+// ####################################### VERIFICAÇõES DE EMAIL, SENHA E TIPOS ##############################################################
 
 
 // função para redefinir senha 
@@ -209,28 +200,24 @@ async function verificarEmail(emailResetTest) {
     });
 }
 
-// cria a tela de redefinirSenha
-async function criarTelaReset() {
-        nativeTheme.themeSource = 'dark';
-        const resetWindow = new BrowserWindow ({
-            width: 450, 
-            height: 450, 
-            resizable: false, 
-            autoHideMenuBar: true,
-        webPreferences: {
-                preload: path.join(__dirname, 'preload.js'),
-                contextIsolation: true, 
-                nodeIntegration: false
-            }
-        })
-        resetWindow.loadFile('./src/views/login/ForgotPassword.html');
-
-        resetWindow.on('closed', () => {
-                resetWindow = null;
-        });
-
-        return resetWindow; 
+// verifica se existe um gerente cadastrado 
+async function verificarGerente(tipoFuncionario) {
+  const db = await conn();
+  return new Promise((resolve, reject) => {
+    const query = `SELECT id, nome FROM tb_Funcionarios WHERE tipo = ?`
+    db.all(query, [tipoFuncionario], (err, rows) => {
+      db.close();
+      if (err) {
+        console.error("Erro ao pesquisar gerente", err);
+        reject(err);
+        return;
+      }
+      resolve(rows); 
+    });
+  });
 }
+
+//#################################################### FUNÇOES DE CADASTRO ###################################################
 
 // função cadastrar funcionario 
 async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
@@ -256,22 +243,18 @@ async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
     });
   });
 }
-
-// verifica se existe um gerente cadastrado 
-async function verificarGerente(tipoFuncionario) {
-  const db = await conn();
-  return new Promise((resolve, reject) => {
-    const query = `SELECT id, nome FROM tb_Funcionarios WHERE tipo = ?`
-    db.all(query, [tipoFuncionario], (err, rows) => {
-      db.close();
-      if (err) {
-        console.error("Erro ao pesquisar gerente", err);
-        reject(err);
-        return;
-      }
-      resolve(rows); 
-    });
-  });
+async function cadastrarCategoria(nomeCategoria, status) {
+    
+        const db = await conn(); 
+        return new Promise((resolve) => {
+            const query = `INSERT INTO tb_Categorias (nome, status) VALUES (?, ?)`;
+            db.run(query, [nomeCategoria, status], function(err) {
+                db.close();
+                if (err) resolve({ success: false, error: err.message });
+                else resolve(true);
+            });
+        });
+        
 }
 
 
@@ -282,7 +265,7 @@ async function verificarGerente(tipoFuncionario) {
 //cria a tela de login 
 async function criarLoginWindow() {
     nativeTheme.themeSource = 'dark';
-    loginWindow = new BrowserWindow({  // ← Atribui à variável global
+    loginWindow = new BrowserWindow({  
         width: 1920,
         height: 1080,
         resizable: true,
@@ -302,8 +285,31 @@ async function criarLoginWindow() {
     return loginWindow; 
 }
 
+// cria a tela de redefinirSenha
+async function criarTelaReset() {
+        nativeTheme.themeSource = 'dark';
+        const resetWindow = new BrowserWindow ({
+            width: 450, 
+            height: 450, 
+            resizable: false, 
+            autoHideMenuBar: true,
+        webPreferences: {
+                preload: path.join(__dirname, 'preload.js'),
+                contextIsolation: true, 
+                nodeIntegration: false
+            }
+        })
+        resetWindow.loadFile('./src/views/login/ForgotPassword.html');
+
+        resetWindow.on('closed', () => {
+                resetWindow = null;
+        });
+
+        return resetWindow; 
+}
+
 // criar tela de ADM
-let adm = null;  
+
 async function admWindow(){
     nativeTheme.themeSource = 'dark';
     const adm = new BrowserWindow({
@@ -338,6 +344,59 @@ function criarTelaCadastroFuncionario() {
     return win; 
 }
 
+async function TelaDeVerificacaoToken() {
+    nativeTheme.themeSource = 'dark';
+       VerificacaoToken = new BrowserWindow ({
+            width: 450, 
+            height: 450, 
+            resizable: false, 
+            autoHideMenuBar: true,
+        webPreferences: {
+                preload: path.join(__dirname, 'preload.js'),
+                contextIsolation: true, 
+                nodeIntegration: false
+            }
+        })
+                VerificacaoToken.loadFile('./src/views/login/reset.html');
+                    VerificacaoToken.on('closed', () => {
+                    VerificacaoToken = null;
+        });
+}
+// cria a tela de gerente
+function criarTelaGerente() {
+    nativeTheme.themeSource = 'dark';
+    const win = new BrowserWindow({
+        width: 1920,
+        height: 1080,
+        resizable: false,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: true
+        }
+    });
+    win.loadFile('./src/views/gerente/gerente.html'); 
+}
+// cria a tela de cadastro categoria
+function criarTelaCadastroCategoria() {
+    nativeTheme.themeSource = 'dark';
+    const win = new BrowserWindow({
+        width: 1920,
+        height: 1080,
+        resizable: false,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: true
+        }
+    });
+    win.loadFile('./src/views/gerente/cadastroCategoria.html'); 
+}
+
+
+
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
     criarLoginWindow();
@@ -354,10 +413,6 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 });
-
-
-
-
 
 
 // ######################################################### ROTAS #########################################################################
@@ -377,6 +432,7 @@ ipcMain.handle("fecharLogin", async () => {
     }
     return { success: false, message: 'Janela de login não encontrada' };
 });
+
 // cadastrar funcionario
 ipcMain.handle('cadastrar-funcionario', async (event, nome, cpf, email, senha, tipoFuncionario) => {
     return await cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario);
@@ -397,28 +453,39 @@ ipcMain.handle("chamar-redefinir", async(event, emailResetTest) => {
    return await verificarEmail(emailResetTest);
 });
 
-// abre a tela de verificação de token
-let abrirTelaDeVerificacaoToken = null; 
-ipcMain.handle("abrirTelaDeVerificacaoToken", async() => {
-if(!abrirTelaDeVerificacaoToken){
-     nativeTheme.themeSource = 'dark';
-        abrirTelaDeVerificacaoToken = new BrowserWindow ({
-            width: 450, 
-            height: 450, 
-            resizable: false, 
-            autoHideMenuBar: true,
-        webPreferences: {
-                preload: path.join(__dirname, 'preload.js'),
-                contextIsolation: true, 
-                nodeIntegration: false
-            }
-        })
-        abrirTelaDeVerificacaoToken.loadFile('./src/views/login/reset.html');
-        abrirTelaDeVerificacaoToken.on('closed', () => {
-                abrirTelaDeVerificacaoToken = null;
-        });
-}
+// chama a tela de gerente 
+ipcMain.handle('abrirTelaGerente', async () => {
+    return criarTelaGerente();
 });
+
+// chama a tela de cadastro de categoria 
+ipcMain.handle('abrirCadastroCategoria', async () => {
+    return criarTelaCadastroCategoria();
+});
+
+
+// abre a tela de verificação de token
+ipcMain.handle("abrirTelaDeVerificacaoToken", async() => {
+if(TelaDeVerificacaoToken){
+    TelaDeVerificacaoToken(); 
+    
+}});
+
+ipcMain.handle('cadastrar-categoria', async (event, nomeCategoria, status) => {
+        return await cadastrarCategoria(nomeCategoria, status); 
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 // gera token de verificação
 ipcMain.handle("gerar-token", async (event, email) => {
