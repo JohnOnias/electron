@@ -298,10 +298,46 @@ const loginWindow = () => {
 
 }
 
+function criarTelaGerente() {
+    nativeTheme.themeSource = 'dark';
+    const win = new BrowserWindow({
+        width: 1920,
+        height: 1080,
+        resizable: false,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: true
+        }
+    });
+    win.loadFile('./src/views/gerente/gerente.html'); 
+}
+
+function criarTelaCadastroCategoria() {
+    nativeTheme.themeSource = 'dark';
+    const win = new BrowserWindow({
+        width: 1920,
+        height: 1080,
+        resizable: false,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: true
+        }
+    });
+    win.loadFile('./src/views/gerente/cadastroCategoria.html'); 
+}
+
+
+
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
   loginWindow(); 
   criarTelaCadastroFuncionario();
+  criarTelaCadastroCategoria();
+  
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
  app.on('activate', () => {
@@ -339,6 +375,7 @@ ipcMain.handle("fecharResetTela", async () => {
 ipcMain.handle("chamar-redefinir", async(event, emailResetTest) => {
    return await verificarEmail(emailResetTest);
 });
+
 
 // abre a tela de verificação de token
 let abrirTelaDeVerificacaoToken = null; 
@@ -396,3 +433,23 @@ ipcMain.handle("resetar-senha", async (event, token, novaSenha) => {
 ipcMain.handle('abrirCadastroFuncionario', async () => {
     return await criarTelaCadastroFuncionario();
 });
+ipcMain.handle('abrirTelaGerente', async () => {
+    return criarTelaGerente();
+});
+ipcMain.handle('abrirCadastroCategoria', async () => {
+    return criarTelaCadastroCategoria();
+});
+
+ipcMain.handle('cadastrar-categoria', async (event, nomeCategoria, status) => {
+    const db = await conn(); 
+    return new Promise((resolve) => {
+        const query = `INSERT INTO tb_Categorias (nome, status) VALUES (?, ?)`;
+        db.run(query, [nomeCategoria, status], function(err) {
+            db.close();
+            if (err) resolve({ success: false, error: err.message });
+            else resolve(true);
+        });
+    });
+});
+
+

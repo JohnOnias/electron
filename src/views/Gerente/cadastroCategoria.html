@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar Categoria</title> 
+</head>
+<body>
+
+<form id="formCadastroCategoria">
+
+    <label for="nomeCategoria">Nome da Categoria*</label>
+    <input type="text" id="nomeCategoria" required>
+
+    <label for="statusCategoria">Status*</label>
+    <select id="statusCategoria" required>
+        <option value="">Selecione</option>
+        <option value="Ativa">Ativa</option>
+        <option value="Inativa">Inativa</option>
+    </select>
+
+    <button id="enviarCategoria">Cadastrar</button>
+
+</form>
+
+<!-- Importa o JS -->
+<script src="../../public/js/Gerente/cadastroCategoria.js"></script>
+
+</body>
+</html>
