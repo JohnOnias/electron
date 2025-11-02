@@ -1,6 +1,9 @@
+const btnCadastrarFuncionario = document.querySelector('#btnCadastrar');
 
-const { ipcRenderer } = require('electron');
 
-document.getElementById('btnCadastrarFuncionario').addEventListener('click', async () => {
-    ipcRenderer.invoke('abrirCadastroFuncionario');
-});
+btnCadastrarFuncionario.addEventListener("click", async() => {
+
+    await window.api.abrirTelaDeCadastroFuncionario(); 
+
+})
+

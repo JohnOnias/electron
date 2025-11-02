@@ -43,11 +43,6 @@ nav a {
   text-decoration: none;
 }
 
-nav .ativo a {
-  font-weight: bold;
-  color: #00bcd4;
-}
-
 .conteudo {
   flex: 1;
   padding: 50px;
@@ -70,16 +65,7 @@ button {
   font-size: 16px;
 }
 
-#btnGerente {
-  background-color: white;
-  color: black;
-}
 
-#btnGarcom {
-  background-color: #00bcd4;
-  color: white;
-}
 
-#btnGarcom.ativo {
-  box-shadow: 0 0 10px #00bcd4;
-}
+
+

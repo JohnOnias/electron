@@ -14,11 +14,12 @@
             <input type="email" id="email" placeholder="E-mail" required>
             <input type="password" id="senha" placeholder="Senha" required>
             <input type="password" id="confirmarSenha" placeholder="Confirmação da Senha" required>
-            <select id="tipoFuncionario">
+          <select id="tipoFuncionario" required>
+                <option value="" disabled selected>Selecione</option>
                 <option value="gerente">Gerente</option>
                 <option value="garcom">Garçom</option>
             </select> <br>
-            <button id="enviar">Cadastrar</button>
+            <button id="enviar" type="submit">Cadastrar</button>
        </form>
         <p id="msg"></p>
     </div>

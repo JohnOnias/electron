@@ -1,9 +1,8 @@
+const form = document.getElementById('formCadastro');
 
-const bnt = document.getElementById('enviar');
-const form = document.getElementById('formCadastro')
-
-bnt.addEventListener("click", async (e) => {
-    e.preventDefault();
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    
 
     const nome = document.getElementById('nome').value;
     const cpf = document.getElementById('cpf').value;
@@ -11,20 +10,32 @@ bnt.addEventListener("click", async (e) => {
     const senha = document.getElementById('senha').value;
     const confirmarSenha = document.getElementById('confirmarSenha').value;
     const tipoFuncionario = document.getElementById('tipoFuncionario').value;
-    console.log(nome, cpf, email, senha, tipoFuncionario);
 
-    if(senha !== confirmarSenha){
-        msg.textContent = "As senhas não conferem!";
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
         return;
     }
 
-    // envia para main.js para inserir no banco
-    const resultado = await window.api.cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario);
+ 
+    if (senha !== confirmarSenha) {
+        alert("As senhas não conferem!");
+        return;
+    }
+
     
-    if(resultado){
-     alert("Funcionário cadastrado com sucesso!");
-        form.reset();
-    } else {
-        alert("Erro: " + resultado.error);
+    try {
+        const resultado = await window.api.cadastrarFuncionario(
+            nome, cpf, email, senha, tipoFuncionario
+        );
+
+        if (resultado.success) {
+            alert("Funcionário cadastrado com sucesso!");
+            form.reset();
+        } else {
+            alert("Erro: " + resultado.error);
+        }
+    } catch (error) {
+        alert("Erro ao cadastrar funcionário: " + error.message);
     }
 });
