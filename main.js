@@ -307,7 +307,7 @@ async function criarLoginWindow() {
 // cria a tela de redefinirSenha
 async function criarTelaReset() {
         nativeTheme.themeSource = 'dark';
-        const resetWindow = new BrowserWindow ({
+        let resetWindow = new BrowserWindow ({
             width: 450, 
             height: 450, 
             resizable: false, 
@@ -434,8 +434,8 @@ function criarTelaCadastroProduto() {
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
-    //criarLoginWindow();
-    criarTelaGerente(); 
+    criarLoginWindow();
+    // 
     //criarTelaCadastroProduto();
    
 
