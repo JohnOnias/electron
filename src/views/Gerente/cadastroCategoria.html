@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Cadastrar Categoria</title> 
+    <link rel="stylesheet" href="../../public/css/Gerente/cadastroCategoria.css">
 </head>
 <body>
-
+ <div class="container">
 <form id="formCadastroCategoria">
 
-    <label for="nomeCategoria">Nome da Categoria*</label>
-    <input type="text" id="nomeCategoria" required>
+    <label for="nomeCategoria">Nome da Categoria</label>
+    <input type="text" id="nomeCategoria" placeholder="Categoria" required>
 
-    <label for="statusCategoria">Status*</label>
+    <label for="statusCategoria">Status:</label>
     <select id="statusCategoria" required>
         <option value="">Selecione</option>
         <option value="Ativa">Ativa</option>
@@ -21,7 +22,7 @@
     <button id="enviarCategoria">Cadastrar</button>
 
 </form>
-
+</div>
 <!-- Importa o JS -->
 <script src="../../public/js/gerente/cadastroCategoria.js"></script>
 

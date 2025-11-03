@@ -12,7 +12,7 @@ let loginWindow = null;
 let resetWindow = null;
 let tokenWindow = null;
 let adm = null;  
-let TelaDeVerificacaoToken = null; 
+let VerificacaoToken = null; 
 
 
 // ################################################## envio de emails #################################################################
@@ -167,7 +167,7 @@ async function loginAuth(email, senhaDigitada) {
     });
   });
 }
-
+   
 // ####################################### VERIFICAÇõES DE EMAIL, SENHA E TIPOS ##############################################################
 
 
@@ -217,6 +217,7 @@ async function verificarGerente(tipoFuncionario) {
   });
 }
 
+
 //#################################################### FUNÇOES DE CADASTRO ###################################################
 
 // função cadastrar funcionario 
@@ -257,6 +258,24 @@ async function cadastrarCategoria(nomeCategoria, status) {
         
 }
 
+
+async function cadastrarProduto(nome, preco, categoria, descricao) {
+  const db = await conn();
+  return new Promise((resolve) => {
+    const query = `
+      INSERT INTO tb_Produtos (nome, preco, categoria_id, descricao)
+      VALUES (?, ?, ?, ?)
+    `;
+    db.run(query, [nome, preco, categoria, descricao], function (err) {
+      if (err) {
+        resolve({ success: false, error: err.message });
+      } else {
+        resolve({ success: true });
+      }
+      db.close();
+    });
+  });
+}
 
 
 // ######################################### CRIAÇÃO DE TELAS ################################################################
@@ -336,7 +355,7 @@ function criarTelaCadastroFuncionario() {
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
-            nodeIntegration: false // ← Mude para false por segurança
+            nodeIntegration: false 
         }
     });
 
@@ -382,8 +401,8 @@ function criarTelaGerente() {
 function criarTelaCadastroCategoria() {
     nativeTheme.themeSource = 'dark';
     const win = new BrowserWindow({
-        width: 1920,
-        height: 1080,
+        width: 350,
+        height: 550,
         resizable: false,
         autoHideMenuBar: true,
         webPreferences: {
@@ -395,11 +414,30 @@ function criarTelaCadastroCategoria() {
     win.loadFile('./src/views/gerente/cadastroCategoria.html'); 
 }
 
+// tela de cadastro de produto
+function criarTelaCadastroProduto() {
+    nativeTheme.themeSource = 'dark';
+    const win = new BrowserWindow({
+        width: 350,
+        height: 550,
+        resizable: false,
+        autoHideMenuBar: true,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: true
+        }
+    });
+    win.loadFile('./src/views/gerente/cadastroProduto.html'); 
+}
 
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
-    criarLoginWindow();
+    //criarLoginWindow();
+    criarTelaGerente(); 
+    //criarTelaCadastroProduto();
+   
 
 
 
@@ -455,12 +493,12 @@ ipcMain.handle("chamar-redefinir", async(event, emailResetTest) => {
 
 // chama a tela de gerente 
 ipcMain.handle('abrirTelaGerente', async () => {
-    return criarTelaGerente();
+    return await criarTelaGerente();
 });
 
 // chama a tela de cadastro de categoria 
 ipcMain.handle('abrirCadastroCategoria', async () => {
-    return criarTelaCadastroCategoria();
+    return await criarTelaCadastroCategoria();
 });
 
 
@@ -475,16 +513,9 @@ ipcMain.handle('cadastrar-categoria', async (event, nomeCategoria, status) => {
         return await cadastrarCategoria(nomeCategoria, status); 
 });
 
-
-
-
-
-
-
-
-
-
-
+ipcMain.handle('cadastrarProduto',async (nome, preco, categoria, descricao) =>{
+     return await cadastrarProduto(nome, preco, categoria, descricao); 
+});
 
 
 // gera token de verificação
@@ -529,6 +560,11 @@ ipcMain.handle("abrirCadastroFuncionario", async(event)=>{
 });
 
 
+// abrir tela de cadastro produtos
+ipcMain.handle("abrirCadastroProduto", async(event)=>{
+       await criarTelaCadastroProduto(); 
+        
+});
 
 // abrir tela depois do login 
  ipcMain.handle('abrirTelaAdm', async (event) => {
@@ -554,6 +590,15 @@ ipcMain.handle("abrirCadastroFuncionario", async(event)=>{
     }
 });
 
+ipcMain.handle('get-categorias', async (event) => {
+    const db = await conn(); 
+  return new Promise((resolve, reject) => {
+    db.all("SELECT id, nome FROM tb_Categorias", [], (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+});
 
 
 /* ipcMain.handle('abrirCadastroFuncionario', async (event) => {
