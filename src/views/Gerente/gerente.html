@@ -5,6 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tela de Inicio - Administrador</title>
     <link rel="stylesheet" href="../../public/css/Gerente/gerente.css">
+    <style>
+        /* Adicione estes estilos ao seu arquivo gerente.css ou diretamente aqui para as mesas */
+        .mesas-secao {
+            margin-bottom: 20px;
+        }
+        .mesas-secao h2 {
+            margin-bottom: 10px;
+        }
+        .mesas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+            gap: 10px;
+            padding: 10px;
+        }
+        .mesa {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .mesa.aberta {
+            background-color: green;
+            color: white;
+        }
+        .mesa.sem-ocupacao {
+            background-color: gray;
+            color: white;
+        }
+        .mesa.fechada {
+            background-color: gray;
+            color: white;
+        }
+        .mesa.pagamento {
+            background-color: green;
+            color: white;
+        }
+    </style>
 </head>
 <body>
   <div class="container">
@@ -64,7 +106,56 @@
 
 
     <div id="telaProdutos" class="tela" style="display:none;"></div>
-    <div id="telaMesas" class="tela"></div>
+    <div id="telaMesas" class="tela">
+        <h1>Mesas e Pedidos</h1>
+        
+        <!-- Seção Verde (Mesas Abertas) -->
+        <div class="mesas-secao">
+            <h2>Mesas em uso</h2>
+            <div class="mesas-grid">
+                <div class="mesa aberta">4</div>
+                <div class="mesa aberta">8</div>
+                <div class="mesa aberta">12</div>
+                <div class="mesa aberta">16</div>
+                <div class="mesa aberta">20</div>
+                <div class="mesa aberta">24</div>
+                <div class="mesa aberta">28</div>
+                  <div class="mesa pagamento">3</div>
+                <div class="mesa pagamento">7</div>
+                <div class="mesa pagamento">11</div>
+                <div class="mesa pagamento">15</div>
+                <div class="mesa pagamento">19</div>
+                <div class="mesa pagamento">23</div>
+                <div class="mesa pagamento">27</div>
+            </div>
+        </div>
+        
+       
+        <!-- Seção Cinza (Sem Ocupação) -->
+        <div class="mesas-secao">
+            <h2>Sem Ocupação</h2>
+            <div class="mesas-grid">
+                <div class="mesa sem-ocupacao">1</div>
+                <div class="mesa sem-ocupacao">5</div>
+                <div class="mesa sem-ocupacao">9</div>
+                <div class="mesa sem-ocupacao">13</div>
+                <div class="mesa sem-ocupacao">17</div>
+                <div class="mesa sem-ocupacao">21</div>
+                <div class="mesa sem-ocupacao">25</div>
+                <div class="mesa sem-ocupacao">29</div>
+                <div class="mesa fechada">2</div>
+                <div class="mesa fechada">6</div>
+                <div class="mesa fechada">10</div>
+                <div class="mesa fechada">14</div>
+                <div class="mesa fechada">18</div>
+                <div class="mesa fechada">22</div>
+                <div class="mesa fechada">26</div>
+                <div class="mesa fechada">30</div>
+            </div>
+        </div>
+        
+        
+    </div>
 
 
 
