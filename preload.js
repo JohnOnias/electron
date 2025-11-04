@@ -30,7 +30,7 @@ contextBridge.exposeInMainWorld("api", {
     // Gerente
     abrirTelaGerente: () => ipcRenderer.invoke("abrirTelaGerente"),
     abrirCadastroProduto: () => ipcRenderer.invoke("abrirCadastroProduto"),
-    cadastrarProduto: (nome, preco, categoria, descricao) => ipcRenderer.invoke("cadastrarProduto", nome, preco, categoria, descricao)
+    cadastrarProduto: (nome, preco, categoria_id, descricao) => ipcRenderer.invoke("cadastrarProduto", nome, preco, categoria_id, descricao)
 
 
 
