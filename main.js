@@ -445,6 +445,7 @@ function criarTelaCadastroProduto() {
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
     criarLoginWindow();
+    criarTelaGerente(); 
 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
