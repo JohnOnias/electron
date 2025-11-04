@@ -13,6 +13,7 @@
     "electron": "^38.5.0"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "bootstrap": "^5.3.8",
     "nodemailer": "^7.0.10",

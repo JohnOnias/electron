@@ -38,9 +38,24 @@ nav li {
   margin: 15px 0;
 }
 
+li:hover{
+    font-size: large;
+    background-color: rgb(73, 73, 73);
+    
+}
+
+a:hover{
+    font-size: large;
+    background-color: rgb(73, 73, 73);
+    
+}
+
 nav a {
   color: white;
   text-decoration: none;
+}
+a{
+    color: white;
 }
 
 .conteudo {
@@ -60,9 +75,18 @@ button {
   padding: 15px 30px;
   margin-right: 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
+}
+button:hover{
+    background-color: rgba(115, 117, 227, 1);
+}
+.divbnt{
+   
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
 }
 
 

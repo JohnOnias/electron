@@ -6,6 +6,7 @@ const { rejects } = require('assert');
 const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcryptjs");
+const saltRounds = 10; 
 
 //######################################################## variaveis globais ##################################################
 let loginWindow = null; 
@@ -129,44 +130,41 @@ function conn() {
 // ##################################################### FUNÇOES LOGIN #########################################################################################
 
 
-// função de login e auth
-async function loginAuth(email, senhaDigitada) {
+async function login(email, senha){
   const db = await conn();
+  
   return new Promise((resolve, reject) => {
     const query = `
-      SELECT 'adm' as tipo, id, nome, email, senha
-      FROM tb_Administrador
-      WHERE email = ?
-      UNION ALL
-      SELECT id, nome, tipo, email, senha
-      FROM tb_Funcionarios
-      WHERE email = ?
-      LIMIT 1
+      SELECT tipo, id, nome, email, senha FROM (
+        SELECT 'adm' AS tipo, id, nome, email, senha
+        FROM tb_Administrador
+        WHERE email = ?
+        UNION ALL
+        SELECT tipo, id, nome, email, senha
+        FROM tb_Funcionarios
+        WHERE email = ?
+      ) LIMIT 1
     `;
-    db.all(query, [email, email], async (err, rows) => {
+
+    db.get(query, [email, email], async (err, usuario) => {
       db.close();
       if (err) return reject(err);
-      if (!rows || rows.length === 0) return resolve(null); // usuário não encontrado
+      if (!usuario) return resolve(null); // email não encontrado
 
-      const usuario = rows[0]; // pega o primeiro resultado
-      try {
-        const senhaValida = await bcrypt.compare(senhaDigitada, usuario.senha);
-        if (!senhaValida) return resolve(null); // senha incorreta
+      const senhaValida = await bcrypt.compare(senha, usuario.senha);
+      if (!senhaValida) return resolve(null); // senha incorreta
 
-        // Não envie o hash para o renderer
-        const retorno = {
-          tipo: usuario.tipo, // 'adm', 'gerente' ou 'garçom'
-          id: usuario.id,
-          nome: usuario.nome,
-          email: usuario.email
-        };
-        return resolve(retorno);
-      } catch (e) {
-        return reject(e);
-      }
+     
+      resolve({
+        id: usuario.id,
+        nome: usuario.nome,
+        email: usuario.email,
+        tipo: usuario.tipo 
+      });
     });
   });
-}
+};
+
    
 // ####################################### VERIFICAÇõES DE EMAIL, SENHA E TIPOS ##############################################################
 
@@ -229,12 +227,14 @@ async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
       return { success: false, error: "Já existe um gerente cadastrado!"}; 
     }
   }
-  return new Promise((resolve) => {
+   const hash = await bcrypt.hash(senha, saltRounds);
+  return new Promise((resolve) =>  {
+
     const query = `
       INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
       VALUES (?, ?, ?, ?, ?)
     `;
-    db.run(query, [nome, cpf, email, senha, tipoFuncionario], function (err) {
+    db.run(query, [nome, cpf, email, hash, tipoFuncionario], function (err) {
       if (err) {
         resolve({ success: false, error: err.message });
       } else {
@@ -244,6 +244,7 @@ async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
     });
   });
 }
+
 async function cadastrarCategoria(nomeCategoria, status) {
     
         const db = await conn(); 
@@ -305,26 +306,28 @@ async function criarLoginWindow() {
 }
 
 // cria a tela de redefinirSenha
+
 async function criarTelaReset() {
-        nativeTheme.themeSource = 'dark';
-        let resetWindow = new BrowserWindow ({
-            width: 450, 
-            height: 450, 
-            resizable: false, 
-            autoHideMenuBar: true,
-        webPreferences: {
-                preload: path.join(__dirname, 'preload.js'),
-                contextIsolation: true, 
-                nodeIntegration: false
-            }
-        })
-        resetWindow.loadFile('./src/views/login/ForgotPassword.html');
+  nativeTheme.themeSource = 'dark';
+  resetWindow = new BrowserWindow ({
+    width: 450, 
+    height: 450, 
+    resizable: false, 
+    autoHideMenuBar: true,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true, 
+      nodeIntegration: false
+    }
+  });
 
-        resetWindow.on('closed', () => {
-                resetWindow = null;
-        });
+  resetWindow.loadFile('./src/views/login/ForgotPassword.html');
 
-        return resetWindow; 
+  resetWindow.on('closed', () => {
+    resetWindow = null;
+  });
+
+  return resetWindow;
 }
 
 // criar tela de ADM
@@ -344,6 +347,7 @@ async function admWindow(){
     adm.loadFile('./src/views/admin/admin.html');
     return adm; 
 }
+
 // criar a tela de cadastro de funcionario 
 function criarTelaCadastroFuncionario() {
     nativeTheme.themeSource = 'dark';
@@ -363,26 +367,30 @@ function criarTelaCadastroFuncionario() {
     return win; 
 }
 
-async function TelaDeVerificacaoToken() {
-    nativeTheme.themeSource = 'dark';
-       VerificacaoToken = new BrowserWindow ({
-            width: 450, 
-            height: 450, 
-            resizable: false, 
-            autoHideMenuBar: true,
-        webPreferences: {
-                preload: path.join(__dirname, 'preload.js'),
-                contextIsolation: true, 
-                nodeIntegration: false
-            }
-        })
-                VerificacaoToken.loadFile('./src/views/login/reset.html');
-                    VerificacaoToken.on('closed', () => {
-                    VerificacaoToken = null;
-        });
+async function criarTelaVerificacaoToken() {
+  nativeTheme.themeSource = 'dark';
+  VerificacaoToken = new BrowserWindow ({
+    width: 450, 
+    height: 450, 
+    resizable: false, 
+    autoHideMenuBar: true,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true, 
+      nodeIntegration: false
+    }
+  });
+
+  VerificacaoToken.loadFile('./src/views/login/reset.html');
+  VerificacaoToken.on('closed', () => {
+    VerificacaoToken = null;
+  });
+
+  return VerificacaoToken;
 }
 // cria a tela de gerente
-function criarTelaGerente() {
+
+async function criarTelaGerente() {
     nativeTheme.themeSource = 'dark';
     const win = new BrowserWindow({
         width: 1920,
@@ -396,7 +404,9 @@ function criarTelaGerente() {
         }
     });
     win.loadFile('./src/views/gerente/gerente.html'); 
+    return win;
 }
+
 // cria a tela de cadastro categoria
 function criarTelaCadastroCategoria() {
     nativeTheme.themeSource = 'dark';
@@ -435,10 +445,6 @@ function criarTelaCadastroProduto() {
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
     criarLoginWindow();
-    // 
-    //criarTelaCadastroProduto();
-   
-
 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
@@ -457,8 +463,8 @@ app.on('window-all-closed', () => {
 
 
 // login auth 
-ipcMain.handle("login-auth", async (event, email, senha) => {
-   return await loginAuth(email, senha);
+ipcMain.handle("login", async (event, email, senha) => {
+   return await login(email, senha);
 });
 
 // fechar login sa desgraça 
@@ -491,10 +497,7 @@ ipcMain.handle("chamar-redefinir", async(event, emailResetTest) => {
    return await verificarEmail(emailResetTest);
 });
 
-// chama a tela de gerente 
-ipcMain.handle('abrirTelaGerente', async () => {
-    return await criarTelaGerente();
-});
+
 
 // chama a tela de cadastro de categoria 
 ipcMain.handle('abrirCadastroCategoria', async () => {
@@ -503,11 +506,13 @@ ipcMain.handle('abrirCadastroCategoria', async () => {
 
 
 // abre a tela de verificação de token
-ipcMain.handle("abrirTelaDeVerificacaoToken", async() => {
-if(TelaDeVerificacaoToken){
-    TelaDeVerificacaoToken(); 
-    
-}});
+ipcMain.handle("abrirTelaDeVerificacaoToken", async () => {
+  if (!VerificacaoToken) {
+    await criarTelaVerificacaoToken();
+    return { success: true };
+  }
+  return { success: false, message: 'Tela já aberta' };
+});
 
 ipcMain.handle('cadastrar-categoria', async (event, nomeCategoria, status) => {
         return await cadastrarCategoria(nomeCategoria, status); 
@@ -566,28 +571,34 @@ ipcMain.handle("abrirCadastroProduto", async(event)=>{
         
 });
 
-// abrir tela depois do login 
- ipcMain.handle('abrirTelaAdm', async (event) => {
-    try {
-        const win = admWindow();
-        
-        // Fecha a janela de login após abrir o cadastro
-        if (loginWindow && !loginWindow.isDestroyed()) {
-            loginWindow.close();
-            loginWindow = null;
-        }
-        
-        return { 
-            success: true, 
-            message: 'Tela de cadastro aberta e login fechado'
-        };
-    } catch (error) {
-        console.error('Erro ao abrir tela de cadastro:', error);
-        return { 
-            success: false, 
-            error: error.message 
-        };
+// chama a tela de gerente 
+ipcMain.handle('abrirTelaGerente', async () => {
+  try {
+    await criarTelaGerente(); // notar await
+    if (loginWindow && !loginWindow.isDestroyed()) {
+      loginWindow.close();
+      loginWindow = null;
     }
+    return { success: true, message: 'Tela de Gerente aberta' };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: error.message };
+  }
+});
+
+// chama a tela adm
+ipcMain.handle('abrirTelaAdm', async () => {
+  try {
+    await admWindow(); // notar await
+    if (loginWindow && !loginWindow.isDestroyed()) {
+      loginWindow.close();
+      loginWindow = null;
+    }
+    return { success: true };
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: error.message };
+  }
 });
 
 ipcMain.handle('get-categorias', async (event) => {

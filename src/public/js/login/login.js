@@ -1,4 +1,5 @@
 const btn = document.querySelector('#entrar');
+let resultado = null; 
 
 btn.addEventListener("click", async (event) => {
     event.preventDefault(); 
@@ -8,29 +9,35 @@ btn.addEventListener("click", async (event) => {
     try {
         const usuario = await window.api.login(email, senha);
 
-        console.log('Resposta do main:', usuario);
+       console.log('Login retornou:', usuario);
         
         if (usuario) {
             alert('Login bem-sucedido!');
             
-            
             if (usuario.tipo === "adm") {
-                // Abre tela de cadastro
-                //const resultado = await window.api.abrirTelaDeCadastroFuncionario();
-                const resultado = await window.api.abrirTelaAdm(); 
-                console.log('Resultado:', resultado);
+
+                resultado = await window.api.abrirTelaAdm(); 
                 
                 if (resultado.success) {
-                    // Fecha a tela de login apenas se a tela de cadastro foi aberta com sucesso
+                
                     await window.api.fecharLogin();
                 }
             }
 
              else if (usuario.tipo === "gerente") {
-                // quando Jotinha terminar o painel chamar aqui
-                console.log('Abrir painel do gerente');
+
+                   resultado = await window.api.abrirTelaGerente(); 
+
+                   if (resultado.success) {
+                
+                    await window.api.fecharLogin();
+                }
+
+
+        
             } else {
                 // chamar o painel de garçom
+                //ainda não criada
                 console.log('Abrir painel do garçom');
             }
         
