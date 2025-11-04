@@ -14,7 +14,7 @@
     <aside class="sidebar">
       <div class="perfil">
         <div class="icone"></div>
-        <p>Gerente<br><strong>Reullyson</strong></p>
+        <p>Gerente<br><strong> ----- nome do gerente aqui --- </strong></p>
       </div>
       <nav>
         <ul>
@@ -33,27 +33,9 @@
             <h1>Mesas</h1>
             <p class="subtitulo">Clique nas mesas para visualizar os pedidos</p>
             
-            <div class="mesas-container">
-                <div class="mesa-card" onclick="visualizarPedidos(1)">
-                    <div class="mesa-numero">01</div>
-                    <span class="status-badge disponivel">Disponível</span>
-                </div>
                 
-                <div class="mesa-card" onclick="visualizarPedidos(2)">
-                    <div class="mesa-numero">02</div>
-                    <span class="status-badge ocupada">Ocupada</span>
-                </div>
-                
-                <div class="mesa-card" onclick="visualizarPedidos(3)">
-                    <div class="mesa-numero">03</div>
-                    <span class="status-badge ocupada">Ocupada</span>
-                </div>
-                
-                <div class="mesa-card" onclick="visualizarPedidos(4)">
-                    <div class="mesa-numero">04</div>
-                    <span class="status-badge ocupada">Ocupada</span>
-                </div>
-            </div>
+           
+           
          </div>
 
          <div id="telaProdutos" class="tela" style="display:none;">
@@ -61,30 +43,14 @@
             <p class="subtitulo">Veja os produtos disponíveis e adicione aos pedidos</p>
             
             <div class="produtos-container">
-                <div class="produto-card" onclick="verCategoria('entradas')">
+               <!--
+                      ################      div estatica para usar de exemplo no for each  ###################### 
+              
+                      <div class="produto-card" onclick="verCategoria('entradas')">
                     <div class="produto-imagem" style="background-image: url('https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=500');"></div>
                     <div class="produto-titulo">Entradas</div>
-                </div>
+                </div> -->
                 
-                <div class="produto-card" onclick="verCategoria('principais')">
-                    <div class="produto-imagem" style="background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500');"></div>
-                    <div class="produto-titulo">Principais</div>
-                </div>
-                
-                <div class="produto-card" onclick="verCategoria('sobremesas')">
-                    <div class="produto-imagem" style="background-image: url('https://images.unsplash.com/photo-1551024506-0bccd828d307?w=500');"></div>
-                    <div class="produto-titulo">Sobremesas</div>
-                </div>
-                
-                <div class="produto-card" onclick="verCategoria('bebidas')">
-                    <div class="produto-imagem" style="background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=500');"></div>
-                    <div class="produto-titulo">Bebidas</div>
-                </div>
-                
-                <div class="produto-card" onclick="verCategoria('vegetarianos')">
-                    <div class="produto-imagem" style="background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500');"></div>
-                    <div class="produto-titulo">Vegetarianos</div>
-                </div>
             </div>
          </div>
 

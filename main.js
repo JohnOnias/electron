@@ -149,7 +149,7 @@ async function login(email, senha){
     db.get(query, [email, email], async (err, usuario) => {
       db.close();
       if (err) return reject(err);
-      if (!usuario) return resolve(null); // email não encontrado
+      if (!usuario) return resolve(null); 
 
       const senhaValida = await bcrypt.compare(senha, usuario.senha);
       if (!senhaValida) return resolve(null); // senha incorreta
@@ -445,7 +445,7 @@ function criarTelaCadastroProduto() {
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
     criarLoginWindow();
-
+    criarTelaGerente(); 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
  app.on('activate', () => {
@@ -607,6 +607,21 @@ ipcMain.handle('get-categorias', async (event) => {
     db.all("SELECT id, nome FROM tb_Categorias", [], (err, rows) => {
       if (err) reject(err);
       else resolve(rows);
+    });
+  });
+});
+
+ipcMain.handle('get-mesas', async (event) => {
+    const db = await conn(); 
+  return new Promise((resolve, reject) => {
+    db.all("SELECT id, numero, status, n_cadeiras FROM tb_Mesas", [], (err, rows) => {
+      if (err) reject(err);
+      else  resolve({
+        id: mesas.id,
+        numero: mesas.numero,
+        status: mesas.status,
+        n_cadeiras: mesas.n_cadeiras 
+      });
     });
   });
 });
