@@ -1,23 +1,26 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tela de Inicio - Administrador</title>
-    <link rel="stylesheet" href="../../public/css/Gerente/gerente.css">
+   <link rel="stylesheet" href="../../public/css/Gerente/gerente.css">
 </head>
 <body>
   <div class="container">
+    
     <!-- Menu lateral -->
     <aside class="sidebar">
       <div class="perfil">
         <div class="icone"></div>
-        <p>Gerente<br><strong>Gerente</strong></p>
+        <p>Gerente<br><strong>Reullyson</strong></p>
       </div>
       <nav>
         <ul>
           <li class="menu"><a href="#" onclick="mostrarTela('Mesas')">Mesas e Pedidos</a></li>
           <li class="menu"><a href="#" onclick="mostrarTela('Produtos')">Produtos</a></li>
+          
           <li class="menu"><a href="#" onclick="mostrarTela('Cadastros')">Cadastro</a></li>
         </ul>
       </nav>
@@ -26,9 +29,66 @@
     <!-- Conteúdo principal -->
     <main class="conteudo">
          <!-- conteudo da mesa e pedidos -->
+         <div id="telaMesas" class="tela">
+            <h1>Mesas</h1>
+            <p class="subtitulo">Clique nas mesas para visualizar os pedidos</p>
+            
+            <div class="mesas-container">
+                <div class="mesa-card" onclick="visualizarPedidos(1)">
+                    <div class="mesa-numero">01</div>
+                    <span class="status-badge disponivel">Disponível</span>
+                </div>
+                
+                <div class="mesa-card" onclick="visualizarPedidos(2)">
+                    <div class="mesa-numero">02</div>
+                    <span class="status-badge ocupada">Ocupada</span>
+                </div>
+                
+                <div class="mesa-card" onclick="visualizarPedidos(3)">
+                    <div class="mesa-numero">03</div>
+                    <span class="status-badge ocupada">Ocupada</span>
+                </div>
+                
+                <div class="mesa-card" onclick="visualizarPedidos(4)">
+                    <div class="mesa-numero">04</div>
+                    <span class="status-badge ocupada">Ocupada</span>
+                </div>
+            </div>
+         </div>
 
-     <div id="telaCadastros" class="tela" style="display:none;" >
+         <div id="telaProdutos" class="tela" style="display:none;">
+            <h1>Produtos</h1>
+            <p class="subtitulo">Veja os produtos disponíveis e adicione aos pedidos</p>
+            
+            <div class="produtos-container">
+                <div class="produto-card" onclick="verCategoria('entradas')">
+                    <div class="produto-imagem" style="background-image: url('https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=500');"></div>
+                    <div class="produto-titulo">Entradas</div>
+                </div>
+                
+                <div class="produto-card" onclick="verCategoria('principais')">
+                    <div class="produto-imagem" style="background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500');"></div>
+                    <div class="produto-titulo">Principais</div>
+                </div>
+                
+                <div class="produto-card" onclick="verCategoria('sobremesas')">
+                    <div class="produto-imagem" style="background-image: url('https://images.unsplash.com/photo-1551024506-0bccd828d307?w=500');"></div>
+                    <div class="produto-titulo">Sobremesas</div>
+                </div>
+                
+                <div class="produto-card" onclick="verCategoria('bebidas')">
+                    <div class="produto-imagem" style="background-image: url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=500');"></div>
+                    <div class="produto-titulo">Bebidas</div>
+                </div>
+                
+                <div class="produto-card" onclick="verCategoria('vegetarianos')">
+                    <div class="produto-imagem" style="background-image: url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=500');"></div>
+                    <div class="produto-titulo">Vegetarianos</div>
+                </div>
+            </div>
+         </div>
 
+         <div id="telaCadastros" class="tela" style="display:none;">
             <h1>Cadastro</h1>
             <div class="containerConteudo">
                 <p>crie uma nova Categoria de Produtos</p>
@@ -49,35 +109,21 @@
                 </div>
                 <hr>
             </div>
-                <div class="containerConteudo">
+            <div class="containerConteudo">
                 <p>Adcione uma nova mesa para gerenciar pedidos</p>
                 
                 <div class="divbnt">
-                <button class="bntPadrao" >Adicionar Mesa</button>   
+                <button class="bntPadrao">Adicionar Mesa</button>   
                 <a href="#"> Editar Mesas</a>
                 </div>
                 <hr>
             </div>
+         </div>
 
-     </div>
-
-
-
-    <div id="telaProdutos" class="tela" style="display:none;"></div>
-    <div id="telaMesas" class="tela"></div>
-
-
-
-     </div>
+         <div id="telaProdutos" class="tela" style="display:none;"></div>
     </main>
   </div>
-    
-    
 
-
-
-
-
-    <script src="../../public/js/Gerente/gerente.js"></script>
+  <script src="../../public/js/Gerente/gerente.js"></script>
 </body>
 </html>
