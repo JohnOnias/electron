@@ -260,18 +260,19 @@ async function cadastrarCategoria(nomeCategoria, status) {
 }
 
 
-async function cadastrarProduto(nome, preco, categoria, descricao) {
+async function cadastrarProduto(nome, preco, categoria_id, descricao) {
   const db = await conn();
   return new Promise((resolve) => {
     const query = `
       INSERT INTO tb_Produtos (nome, preco, categoria_id, descricao)
       VALUES (?, ?, ?, ?)
     `;
-    db.run(query, [nome, preco, categoria, descricao], function (err) {
+    db.run(query, [nome, preco, categoria_id, descricao], function (err) {
       if (err) {
         resolve({ success: false, error: err.message });
       } else {
-        resolve({ success: true });
+        // retornar true para indicar sucesso, consistente com outras rotas
+        resolve(true);
       }
       db.close();
     });
@@ -444,7 +445,9 @@ function criarTelaCadastroProduto() {
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
+    criarLoginWindow();
     criarTelaGerente(); 
+
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
  app.on('activate', () => {
@@ -517,8 +520,8 @@ ipcMain.handle('cadastrar-categoria', async (event, nomeCategoria, status) => {
         return await cadastrarCategoria(nomeCategoria, status); 
 });
 
-ipcMain.handle('cadastrarProduto',async (nome, preco, categoria, descricao) =>{
-     return await cadastrarProduto(nome, preco, categoria, descricao); 
+ipcMain.handle('cadastrarProduto', async (event, nome, preco, categoria_id, descricao) => {
+  return await cadastrarProduto(nome, preco, categoria_id, descricao);
 });
 
 
