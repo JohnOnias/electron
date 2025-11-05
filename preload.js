@@ -31,6 +31,10 @@ contextBridge.exposeInMainWorld("api", {
     abrirTelaGerente: () => ipcRenderer.invoke("abrirTelaGerente"),
     abrirCadastroProduto: () => ipcRenderer.invoke("abrirCadastroProduto"),
 
+    // Current user (set after login, read from other windows)
+    setCurrentUser: (usuario) => ipcRenderer.invoke('set-current-user', usuario),
+    getCurrentUser: () => ipcRenderer.invoke('get-current-user'),
+
 
     cadastrarProduto: (nome, preco, categoria, descricao) => ipcRenderer.invoke("cadastrarProduto", nome, preco, categoria, descricao),
     getMesas: () => ipcRenderer.invoke("get-mesas")

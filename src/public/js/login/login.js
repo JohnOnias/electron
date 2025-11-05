@@ -1,5 +1,6 @@
 const btn = document.querySelector('#entrar');
 let resultado = null; 
+export let exportNome = null;
 
 btn.addEventListener("click", async (event) => {
     event.preventDefault(); 
@@ -8,7 +9,13 @@ btn.addEventListener("click", async (event) => {
 
     try {
         const usuario = await window.api.login(email, senha);
-
+            exportNome = usuario.nome;
+            // informar ao main process qual é o usuário atual para que outras janelas possam recuperar
+            try {
+                await window.api.setCurrentUser(usuario);
+            } catch (err) {
+                console.warn('Não foi possível setar current user via IPC:', err);
+            }
        console.log('Login retornou:', usuario);
         
         if (usuario) {

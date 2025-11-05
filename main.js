@@ -14,6 +14,7 @@ let resetWindow = null;
 let tokenWindow = null;
 let adm = null;  
 let VerificacaoToken = null; 
+let currentUser = null; // armazenar temporariamente o usuário logado
 
 
 // ################################################## envio de emails #################################################################
@@ -469,6 +470,16 @@ ipcMain.handle("login", async (event, email, senha) => {
    return await login(email, senha);
 });
 
+// Permitir que renderers definam/obtenham o usuário atual (setado no login)
+ipcMain.handle('set-current-user', async (event, usuario) => {
+  currentUser = usuario || null;
+  return { success: true };
+});
+
+ipcMain.handle('get-current-user', async (event) => {
+  return currentUser || null;
+});
+
 // fechar login sa desgraça 
 ipcMain.handle("fecharLogin", async () => {
     if (loginWindow && !loginWindow.isDestroyed()) {
@@ -606,14 +617,14 @@ ipcMain.handle('abrirTelaAdm', async () => {
 ipcMain.handle('get-categorias', async (event) => {
     const db = await conn(); 
   return new Promise((resolve, reject) => {
-    db.all("SELECT id, nome FROM tb_Categorias", [], (err, rows) => {
+    db.all("SELECT id, nome, status FROM tb_Categorias", [], (err, rows) => {
       if (err) reject(err);
       else resolve(rows);
     });
   });
 });
 
-ipcMain.handle('get-mesas', async () => {
+ipcMain.handle('get-mesas', async (event) => {
   const db = await conn();
 
   return new Promise((resolve, reject) => {
