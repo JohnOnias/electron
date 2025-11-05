@@ -444,7 +444,6 @@ function criarTelaCadastroProduto() {
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
-    criarLoginWindow();
     criarTelaGerente(); 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
@@ -611,20 +610,17 @@ ipcMain.handle('get-categorias', async (event) => {
   });
 });
 
-ipcMain.handle('get-mesas', async (event) => {
-    const db = await conn(); 
+ipcMain.handle('get-mesas', async () => {
+  const db = await conn();
+
   return new Promise((resolve, reject) => {
     db.all("SELECT id, numero, status, n_cadeiras FROM tb_Mesas", [], (err, rows) => {
       if (err) reject(err);
-      else  resolve({
-        id: mesas.id,
-        numero: mesas.numero,
-        status: mesas.status,
-        n_cadeiras: mesas.n_cadeiras 
-      });
+      else resolve(rows); 
     });
   });
 });
+
 
 
 /* ipcMain.handle('abrirCadastroFuncionario', async (event) => {
