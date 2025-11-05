@@ -1,67 +1,51 @@
-// Função para visualizar pedidos de uma mesa
-function visualizarPedidos(numeroMesa) {
-    alert(`Visualizando pedidos da Mesa ${numeroMesa.toString().padStart(2, '0')}`);
-    // Aqui você pode adicionar a lógica para mostrar os pedidos da mesa
-    // Por exemplo, abrir um modal ou redirecionar para outra página
-}
-
-// Inicializar a tela de Mesas ao carregar a página
-window.addEventListener('DOMContentLoaded', () => {
-    mostrarTela('Mesas');
-});
-
 
 // Função para mostrar a tela selecionada
+const btnCadastrarCategoria = document.getElementById('btnCadastrarCategoria');
+const bntCadastrarProduto = document.getElementById('bntCadastrarProduto');
 
 
 
-function mostrarTela(nomeTela) {
-    // Esconder todas as telas
-    const telas = document.querySelectorAll('.tela');
-    telas.forEach(tela => {
-        tela.style.display = 'none';
-    });
-    
-    // Remover classe active de todos os links
-    const links = document.querySelectorAll('.menu a');
-    links.forEach(link => {
-        link.classList.remove('active');
-    });
-    
-    // Mostrar a tela selecionada
-    if (nomeTela === 'Mesas') {
-        document.getElementById('telaMesas').style.display = 'block';
-        links[0].classList.add('active');
-    } else if (nomeTela === 'Produtos') {
-        document.getElementById('telaProdutos').style.display = 'block';
-        links[1].classList.add('active');
-    } else if (nomeTela === 'Cadastros') {
-        document.getElementById('telaCadastros').style.display = 'block';
-        links[2].classList.add('active');
-    }
+
+btnCadastrarCategoria.addEventListener('click',  async () => {
+
+            await window.api.abrirCadastroCategoria();
+
+
+        });
+
+bntCadastrarProduto.addEventListener('click', async () =>{
+
+     await window.api.abrirCadastroProduto(); 
+})
+
+function mostrarTela(id) {
+    document.querySelectorAll(".tela").forEach(tela => tela.style.display = "none");
+    document.getElementById("tela" + id).style.display = "block";
 }
 
+
+
+
+// #####################################################
 
 const mesas = await window.api.getMesas(); 
 
-mesas.forEach(m => {
-  // pega o modelo (template oculto)
-  let modelo = document.getElementById('divClone'); 
-  
-  // cria uma cópia
-  let clone = modelo.cloneNode(true);
+const container = document.getElementById('telaMesas');
 
-  // atualiza o conteúdo do clone
-  clone.innerHTML = `
-    <div class="mesa-card" onclick="visualizarPedidos(${m.numero})">
-      <div class="mesa-numero">${m.numero}</div>
-      <span class="status-badge disponivel">${m.status}</span>
-    </div>
+mesas.forEach(m => {
+  const card = document.createElement('div');
+  card.classList.add('mesa-card');
+
+  card.innerHTML = `
+    <div class="mesa-numero">${m.numero}</div>
+    <span class="status-badge ${m.status === "Disponível" ? "disponivel" : "ocupada"}">
+      ${m.status}
+    </span>
   `;
 
-  // exibe e adiciona no container
-  clone.style.display = 'block';
-  document.getElementById('telaMesas').append(clone);
+  card.onclick = () => visualizarPedidos(m.numero);
+
+  container.appendChild(card);
 });
 
 
