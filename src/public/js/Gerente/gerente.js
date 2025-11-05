@@ -21,11 +21,10 @@ async function mostrarTela(id) {
     if (tela.id === "telaMesas") {
         await carregarMesas();
     }
-}
 
-async function carregarMesas() {
+
     const mesas = await window.api.getMesas(); 
-    const container = document.getElementById('telaMesas');
+    const container = document.getElementById('mesas-container');
 
     container.innerHTML = "";
 
@@ -33,12 +32,16 @@ async function carregarMesas() {
         const card = document.createElement('div');
         card.classList.add('mesa-card');
 
+       if(m.numero <10){
+        m.numero = "0"+m.numero; 
+       }
         card.innerHTML = `
-        <div class="mesa-numero">${m.numero}</div>
-        <span class="status-badge ${m.status === "Disponível" ? "disponivel" : "ocupada"}">
-          ${m.status}
-        </span>
-      `;
+            <div class="mesa-numero">${m.numero}</div>
+            <span 
+                 class="status-badge ${m.status === "disponivel" ? "disponivel" : "ocupada"}">
+                ${m.status}
+            </span>
+        `;
 
         card.onclick = () => visualizarPedidos(m.numero);
 
