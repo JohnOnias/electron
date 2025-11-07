@@ -10,7 +10,7 @@ btn.addEventListener("click", async (event) => {
     try {
         const usuario = await window.api.login(email, senha);
             exportNome = usuario.nome;
-            // informar ao main process qual é o usuário atual para que outras janelas possam recuperar
+         
             try {
                 await window.api.setCurrentUser(usuario);
             } catch (err) {
@@ -41,10 +41,8 @@ btn.addEventListener("click", async (event) => {
                 }
 
 
-        
             } else {
-                // chamar o painel de garçom
-                //ainda não criada
+            
                 console.log('Abrir painel do garçom');
             }
         
@@ -58,6 +56,7 @@ btn.addEventListener("click", async (event) => {
         alert('Erro no login: ' + error);
     }
 });
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const esqueciAsenha = document.getElementById('esqueci');

@@ -222,29 +222,52 @@ async function verificarGerente(tipoFuncionario) {
 // função cadastrar funcionario 
 async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
   const db = await conn();
-  if (tipoFuncionario === "gerente") {
-    const gerente = await verificarGerente(tipoFuncionario);
-    if (gerente.length > 0) {
-      return { success: false, error: "Já existe um gerente cadastrado!"}; 
-    }
-  }
-   const hash = await bcrypt.hash(senha, saltRounds);
-  return new Promise((resolve) =>  {
 
-    const query = `
-      INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
-      VALUES (?, ?, ?, ?, ?)
-    `;
-    db.run(query, [nome, cpf, email, hash, tipoFuncionario], function (err) {
-      if (err) {
-        resolve({ success: false, error: err.message });
-      } else {
-        resolve({ success: true });
+  try {
+    // Verifica se já existe um gerente (como antes)
+    if (tipoFuncionario === "gerente") {
+      const gerente = await verificarGerente(tipoFuncionario);
+      if (gerente.length > 0) {
+        return { success: false, error: "Já existe um gerente cadastrado!" };
       }
-      db.close();
+    }
+
+    // 🔍 Verifica se o CPF já existe
+    const cpfExiste = await new Promise((resolve, reject) => {
+      db.get("SELECT cpf FROM tb_Funcionarios WHERE cpf = ?", [cpf], (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
     });
-  });
+
+    if (cpfExiste) {
+      db.close();
+      return { success: false, error: "CPF já cadastrado!" };
+    }
+
+    const hash = await bcrypt.hash(senha, saltRounds);
+
+    await new Promise((resolve, reject) => {
+      const query = `
+        INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
+        VALUES (?, ?, ?, ?, ?)
+      `;
+      db.run(query, [nome, cpf, email, hash, tipoFuncionario], function (err) {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
+    db.close();
+    return { success: true };
+
+  } catch (err) {
+    db.close();
+    return { success: false, error: err.message };
+  }
 }
+
+
 
 async function cadastrarCategoria(nomeCategoria, status) {
     
@@ -446,8 +469,9 @@ function criarTelaCadastroProduto() {
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
-    criarLoginWindow();
+    //criarLoginWindow();
     criarTelaGerente(); 
+    //criarTelaCadastroFuncionario();
 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
@@ -634,6 +658,20 @@ ipcMain.handle('get-mesas', async (event) => {
     });
   });
 });
+
+ipcMain.handle('get-produtos-por-categoria', async (event, idCategoria) => {
+  console.log("teste id categoria:", idCategoria);
+    const db = await conn();
+    return new Promise((resolve, reject) => {
+        const query = `SELECT id, nome, preco, descricao FROM tb_Produtos WHERE categoria_id = ?`;  
+        db.all(query, [idCategoria], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+        });
+    });
+});
+  
+
 
 
 

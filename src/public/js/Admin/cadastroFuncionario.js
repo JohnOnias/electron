@@ -1,4 +1,19 @@
 const form = document.getElementById('formCadastro');
+let campoCPF = document.getElementById('cpf');
+
+
+campoCPF.addEventListener('keypress', function(e)  {
+    let tamanhoCampo = e.target.value.length;
+    if (tamanhoCampo == 3) {
+        e.target.value += '.';
+    }
+    if (tamanhoCampo == 7) {
+        e.target.value += '.';
+    }
+    if (tamanhoCampo == 11) {
+        e.target.value += '-';
+    }
+});
 
 form.addEventListener("submit", async (event) => {
     event.preventDefault();

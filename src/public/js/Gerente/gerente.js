@@ -1,6 +1,43 @@
 const btnCadastrarCategoria = document.getElementById('btnCadastrarCategoria');
 const bntCadastrarProduto = document.getElementById('bntCadastrarProduto');
 
+// printar os produtos de cada categoria
+async function visualizarProdutos(id) {
+    // Oculta todas as telas
+    document.querySelectorAll(".tela").forEach(tela => tela.style.display = "none");
+
+    // Mostra a tela de produtos
+    const telaProdutos = document.getElementById("telaProdutos");
+    telaProdutos.style.display = "block";
+
+    // Carrega os produtos
+    const produtos = await window.api.getProdutosPorCategoria(id);
+    const containerProdutos = document.getElementById('produtos-container');
+    containerProdutos.innerHTML = "";
+
+    produtos.forEach(p => {
+        const card = document.createElement('div');
+        card.classList.add('product-item');
+
+        card.innerHTML = `
+            <div class="product-info">
+                <h3 class="product-name">${p.nome}</h3>
+                <p class="product-description">${p.descricao}</p>
+            </div>
+            <div class="product-controls">
+                <div class="product-price">R$ ${p.preco.toFixed(2)}</div>
+                <div class="quantity-controls">
+                    <button class="quantity-btn minus" data-product="${p.id}">-</button>
+                    <span class="quantity-display" id="${p.id}-qty">0</span>
+                    <button class="quantity-btn plus" data-product="${p.id}">+</button>
+                </div>
+            </div>
+        `;
+        containerProdutos.appendChild(card);
+    });
+}
+
+
 btnCadastrarCategoria.addEventListener('click', async () => {
     await window.api.abrirCadastroCategoria();
 });
@@ -48,7 +85,7 @@ async function mostrarTela(id) {
 
     // printar as categorias 
     const categorias = await window.api.getCategorias(); 
-    const containerCategorias = document.getElementById('produtos-container');
+    const containerCategorias = document.getElementById('categorias-container');
 
     containerCategorias.innerHTML = "";
 
@@ -64,10 +101,14 @@ async function mostrarTela(id) {
             </span>
         `;
 
-        card.onclick = () => visualizarProdutos(id);
+        card.onclick = () => visualizarProdutos(c.id);
 
         containerCategorias.appendChild(card);
     });
+
+
+
+    
 
 
 

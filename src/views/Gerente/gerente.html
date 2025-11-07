@@ -19,7 +19,7 @@
       <nav>
         <ul>
           <li class="menu"> <img src="../../../src/public/img/menu/pedidos.png" alt="icone pedidos"> <a href="#" onclick="mostrarTela('Mesas')">Mesas e Pedidos</a></li>
-          <li class="menu"> <img src="../../../src/public/img/menu/produtos.png" alt="icone produtos"> <a href="#" onclick="mostrarTela('Produtos')">Produtos e Categorias</a></li>
+          <li class="menu"> <img src="../../../src/public/img/menu/produtos.png" alt="icone produtos"> <a href="#" onclick="mostrarTela('Categorias')">Produtos e Categorias</a></li>
           <li class="menu"> <img src="../../../src/public/img/menu/cadastros.png" alt="icone cadastros"> <a href="#" onclick="mostrarTela('Cadastros')">Cadastro</a></li>
         </ul>
       </nav>
@@ -42,15 +42,14 @@
            
            
          </div> 
-        
-          <!-- ######################## TELA PRODUTO #################################-->
+          <!-- ######################## TELA CATEGORIAS #################################-->
 
 
-         <div id="telaProdutos" class="tela" style="display:none;">
-            <h1>Produtos</h1>
+         <div id="telaCategorias" class="tela" style="display:none;">
+            <h1>Categorias</h1>
             <p class="subtitulo">Veja as categorias disponíveis para acessar produtos e Adicionar aos pedidos</p>
-            
-            <div class="produtos-container" id="produtos-container">
+
+            <div class="produtos-container" id="categorias-container">
                <!--
                       ################      div estatica para usar de exemplo no for each  ###################### 
               
@@ -62,7 +61,17 @@
             </div>
          </div>
 
+         <!-- ######################## TELA PRODUTOS #################################-->
+          <div id="telaProdutos" class="tela" style="display:none;">
+             <h1>Produtos</h1>
+            <p class="subtitulo">Veja os produtos disponíveis para Adicionar aos pedidos</p>
+                 <div class="produtos-container" id="produtos-container">
 
+                  
+
+
+                 </div>
+          </div>
           <!-- ######################## TELA CADASTRO #################################-->
 
          <div id="telaCadastros" class="tela" style="display:none;">
