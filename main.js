@@ -260,8 +260,8 @@ async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
 
   try{
     if (tipoFuncionario === "gerente") {
-        const gerente = await verificarGerente(tipoFuncionario);
-         if (gerente.length > 0) {
+        const existirGerente = await verificarGerente(tipoFuncionario);
+         if (existirGerente.length > 0) {
             throw new Error("Já existe um gerente cadastrado.");
       }
     }
@@ -279,28 +279,12 @@ async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
       }
 
     }
-
-    // 🔍 Verifica se o CPF já existe
-    const cpfExiste = await new Promise((resolve, reject) => {
-      db.get("SELECT cpf FROM tb_Funcionarios WHERE cpf = ?", [cpf], (err, row) => {
-        if (err) reject(err);
-        else resolve(row);
-      });
-    });
-
-    if (cpfExiste) {
-      db.close();
-      return { success: false, error: "CPF já cadastrado!" };
-    }
-
-    const hash = await bcrypt.hash(senha, saltRounds);
-  } catch (error) {
-    return { success: false, error: error.message };
-  }
-
+  } catch (err) {
+    db.close();
+    return { success: false, error: err.message };
+  } 
+  try {
    const hash = await bcrypt.hash(senha, saltRounds);
-  return new Promise((resolve) =>  {
-
     await new Promise((resolve, reject) => {
       const query = `
         INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
@@ -321,6 +305,9 @@ async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
   }
 }
 
+
+
+
 // função cadastrar categoria
 async function cadastrarCategoria(nomeCategoria, status) {
 
@@ -335,6 +322,7 @@ async function cadastrarCategoria(nomeCategoria, status) {
         });
         
 }
+
 
 // função cadastrar produto
 async function cadastrarProduto(nome, preco, categoria_id, descricao) {
@@ -726,25 +714,3 @@ ipcMain.handle('get-produtos-por-categoria', async (event, idCategoria) => {
 
 
 
-/* ipcMain.handle('abrirCadastroFuncionario', async (event) => {
-    try {
-        const win = criarTelaCadastroFuncionario();
-        
-        // Fecha a janela de login após abrir o cadastro
-        if (loginWindow && !loginWindow.isDestroyed()) {
-            loginWindow.close();
-            loginWindow = null;
-        }
-        
-        return { 
-            success: true, 
-            message: 'Tela de cadastro aberta e login fechado'
-        };
-    } catch (error) {
-        console.error('Erro ao abrir tela de cadastro:', error);
-        return { 
-            success: false, 
-            error: error.message 
-        };
-    }
-});*/
