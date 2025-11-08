@@ -1,5 +1,6 @@
 const btnCadastrarCategoria = document.getElementById('btnCadastrarCategoria');
 const bntCadastrarProduto = document.getElementById('bntCadastrarProduto');
+const btnAdicionarMesa = document.getElementById('btnAdicionarMesa');
 
 
 
@@ -65,12 +66,13 @@ async function visualizarProdutos(id, nome, status) {
 }
 
 
-
-
+// eventos dos botões
 btnCadastrarCategoria.addEventListener('click', async () => {
     await window.api.abrirCadastroCategoria();
 });
-
+btnAdicionarMesa.addEventListener('click', async () => {
+    await window.api.abrirCadastroMesa();
+});
 
 bntCadastrarProduto.addEventListener('click', async () =>{
     await window.api.abrirCadastroProduto(); 
@@ -100,7 +102,7 @@ async function mostrarTela(id) {
         card.innerHTML = `
             <div class="mesa-numero">${m.numero}</div>
             <span 
-                 class="status-badge ${m.status === "disponivel" ? "disponivel" : "ocupada"}">
+                 class="status-badge ${m.status === "Disponivel" ? "disponivel" : "ocupada"}">
                 ${m.status}
             </span>
         `;

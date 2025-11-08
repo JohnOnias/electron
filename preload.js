@@ -38,7 +38,9 @@ contextBridge.exposeInMainWorld("api", {
 
     cadastrarProduto: (nome, preco, categoria, descricao) => ipcRenderer.invoke("cadastrarProduto", nome, preco, categoria, descricao),
     getMesas: () => ipcRenderer.invoke("get-mesas"),
-    getProdutosPorCategoria: (idCategoria) => ipcRenderer.invoke("get-produtos-por-categoria", idCategoria)
+    getProdutosPorCategoria: (idCategoria) => ipcRenderer.invoke("get-produtos-por-categoria", idCategoria),
+    abrirCadastroMesa: () => ipcRenderer.invoke("abrirCadastroMesa"),
+    cadastrarMesa: (numero_mesa, status, n_cadeiras) => ipcRenderer.invoke("cadastro-mesa", numero_mesa, status, n_cadeiras)
 
 
 

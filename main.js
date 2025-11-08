@@ -249,9 +249,56 @@ async function verificarCpf(cpf){
     });
   });
 }
+async function verificarMesa(db, numero_mesa) {
+  return new Promise((resolve, reject) => {
+    const query = `SELECT * FROM tb_Mesas WHERE numero = ?`;
+    db.all(query, [numero_mesa], (err, row) => {
+      if (err) {
+        console.error("Erro ao verificar mesa:", err);
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    });
+  });
+}
 
+//#################################################### FUNÇÕES DE CADASTRO ###################################################
 
-//#################################################### FUNÇOES DE CADASTRO ###################################################
+async function cadastrarMesa(numero_mesa, status, n_cadeiras) {
+  const db = await conn();
+  try {
+
+    if (!numero_mesa) {
+      throw new Error("Número da mesa é obrigatório.");
+    }
+
+    const existingMesa = await verificarMesa(db, numero_mesa);
+    if (existingMesa.length > 0) {
+      throw new Error("Mesa já cadastrada.");
+    }
+
+    await new Promise((resolve, reject) => {
+      const query = `INSERT INTO tb_Mesas (numero, status, n_cadeiras) VALUES (?, ?, ?)`;
+      db.run(query, [numero_mesa, status, n_cadeiras], function(err) {
+        if (err) {
+          console.error("Erro ao cadastrar mesa:", err);
+          reject(err);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+
+    return { success: true };
+  } catch (err) {
+    console.error(err.message);
+    return { success: false, error: err.message };
+  } finally {
+    db.close(); 
+  }
+}
+
 
 
 // função cadastrar funcionario 
@@ -369,6 +416,25 @@ async function criarLoginWindow() {
     });
     
     return loginWindow; 
+}
+
+// cria a tela de cadastro de mesa
+async function criarTelaCadastroMesa() {
+  nativeTheme.themeSource = 'dark';
+  const win = new BrowserWindow({
+    width: 350,
+    height: 550,
+    resizable: false,
+    autoHideMenuBar: true,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
+    }
+  });
+
+  win.loadFile('./src/views/gerente/cadastroMesas.html');
+  return win;
 }
 
 // cria a tela de redefinirSenha
@@ -692,7 +758,7 @@ ipcMain.handle('get-mesas', async (event) => {
   const db = await conn();
 
   return new Promise((resolve, reject) => {
-    db.all("SELECT id, numero, status, n_cadeiras FROM tb_Mesas", [], (err, rows) => {
+    db.all("SELECT id, numero, status, n_cadeiras FROM tb_Mesas order by numero", [], (err, rows) => {
       if (err) reject(err);
       else resolve(rows); 
     });
@@ -709,6 +775,12 @@ ipcMain.handle('get-produtos-por-categoria', async (event, idCategoria) => {
             else resolve(rows);
         });
     });
+});
+ipcMain.handle('abrirCadastroMesa', async (event) => {
+     await criarTelaCadastroMesa();
+});
+ipcMain.handle('cadastro-mesa', async (event, numero_mesa, status, n_cadeiras) => {
+    return await cadastrarMesa(numero_mesa, status, n_cadeiras); 
 });
   
 
