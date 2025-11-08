@@ -13,6 +13,11 @@ campoCPF.addEventListener('keypress', function(e)  {
     if (tamanhoCampo == 11) {
         e.target.value += '-';
     }
+    if (tamanhoCampo >= 14) {
+        e.preventDefault();
+    }
+       
+    
 });
 
 form.addEventListener("submit", async (event) => {
