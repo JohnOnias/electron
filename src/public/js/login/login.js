@@ -1,5 +1,6 @@
 const btn = document.querySelector('#entrar');
 let resultado = null; 
+export let exportNome = null;
 
 btn.addEventListener("click", async (event) => {
     event.preventDefault(); 
@@ -8,7 +9,13 @@ btn.addEventListener("click", async (event) => {
 
     try {
         const usuario = await window.api.login(email, senha);
-
+            exportNome = usuario.nome;
+         
+            try {
+                await window.api.setCurrentUser(usuario);
+            } catch (err) {
+                console.warn('Não foi possível setar current user via IPC:', err);
+            }
        console.log('Login retornou:', usuario);
         
         if (usuario) {
@@ -34,10 +41,8 @@ btn.addEventListener("click", async (event) => {
                 }
 
 
-        
             } else {
-                // chamar o painel de garçom
-                //ainda não criada
+            
                 console.log('Abrir painel do garçom');
             }
         
@@ -51,6 +56,7 @@ btn.addEventListener("click", async (event) => {
         alert('Erro no login: ' + error);
     }
 });
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const esqueciAsenha = document.getElementById('esqueci');

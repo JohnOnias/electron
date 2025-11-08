@@ -14,6 +14,7 @@ let resetWindow = null;
 let tokenWindow = null;
 let adm = null;  
 let VerificacaoToken = null; 
+let currentUser = null; // armazenar temporariamente o usuário logado
 
 
 // ################################################## envio de emails #################################################################
@@ -278,6 +279,21 @@ async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
       }
 
     }
+
+    // 🔍 Verifica se o CPF já existe
+    const cpfExiste = await new Promise((resolve, reject) => {
+      db.get("SELECT cpf FROM tb_Funcionarios WHERE cpf = ?", [cpf], (err, row) => {
+        if (err) reject(err);
+        else resolve(row);
+      });
+    });
+
+    if (cpfExiste) {
+      db.close();
+      return { success: false, error: "CPF já cadastrado!" };
+    }
+
+    const hash = await bcrypt.hash(senha, saltRounds);
   } catch (error) {
     return { success: false, error: error.message };
   }
@@ -285,19 +301,24 @@ async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
    const hash = await bcrypt.hash(senha, saltRounds);
   return new Promise((resolve) =>  {
 
-    const query = `
-      INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
-      VALUES (?, ?, ?, ?, ?)
-    `;
-    db.run(query, [nome, cpf, email, hash, tipoFuncionario], function (err) {
-      if (err) {
-        resolve({ success: false, error: err.message });
-      } else {
-        resolve({ success: true });
-      }
-      db.close();
+    await new Promise((resolve, reject) => {
+      const query = `
+        INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
+        VALUES (?, ?, ?, ?, ?)
+      `;
+      db.run(query, [nome, cpf, email, hash, tipoFuncionario], function (err) {
+        if (err) reject(err);
+        else resolve();
+      });
     });
-  });
+
+    db.close();
+    return { success: true };
+
+  } catch (err) {
+    db.close();
+    return { success: false, error: err.message };
+  }
 }
 
 // função cadastrar categoria
@@ -524,6 +545,16 @@ ipcMain.handle("login", async (event, email, senha) => {
    return await login(email, senha);
 });
 
+// Permitir que renderers definam/obtenham o usuário atual (setado no login)
+ipcMain.handle('set-current-user', async (event, usuario) => {
+  currentUser = usuario || null;
+  return { success: true };
+});
+
+ipcMain.handle('get-current-user', async (event) => {
+  return currentUser || null;
+});
+
 // fechar login sa desgraça 
 ipcMain.handle("fecharLogin", async () => {
     if (loginWindow && !loginWindow.isDestroyed()) {
@@ -661,14 +692,14 @@ ipcMain.handle('abrirTelaAdm', async () => {
 ipcMain.handle('get-categorias', async (event) => {
     const db = await conn(); 
   return new Promise((resolve, reject) => {
-    db.all("SELECT id, nome FROM tb_Categorias", [], (err, rows) => {
+    db.all("SELECT id, nome, status FROM tb_Categorias", [], (err, rows) => {
       if (err) reject(err);
       else resolve(rows);
     });
   });
 });
 
-ipcMain.handle('get-mesas', async () => {
+ipcMain.handle('get-mesas', async (event) => {
   const db = await conn();
 
   return new Promise((resolve, reject) => {
@@ -678,6 +709,20 @@ ipcMain.handle('get-mesas', async () => {
     });
   });
 });
+
+ipcMain.handle('get-produtos-por-categoria', async (event, idCategoria) => {
+  console.log("teste id categoria:", idCategoria);
+    const db = await conn();
+    return new Promise((resolve, reject) => {
+        const query = `SELECT id, nome, preco, descricao FROM tb_Produtos WHERE categoria_id = ?`;  
+        db.all(query, [idCategoria], (err, rows) => {
+            if (err) reject(err);
+            else resolve(rows);
+        });
+    });
+});
+  
+
 
 
 
