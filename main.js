@@ -215,18 +215,73 @@ async function verificarGerente(tipoFuncionario) {
   });
 }
 
+// verifica se o email já está cadastrado
+async function verificarEmail(email){
+  const db = await conn();
+  return new Promise((resolve, reject) => {
+    const query = `SELECT nome FROM tb_Funcionarios WHERE email = ?`;
+    db.all(query, [email], (err, rows) => {
+      db.close();
+      if (err) {
+        console.error("Erro ao verificar e-mail:", err);
+        reject(err);
+      } else {
+        resolve(rows);
+      }
+    });
+  });
+}
+
+// verifica se o cpf já está cadastrado
+async function verificarCpf(cpf){
+  const db = await conn();
+  return new Promise((resolve, reject) => {
+    const query = `SELECT nome FROM tb_Funcionarios WHERE cpf = ?`;
+    db.all(query, [cpf], (err, row) => {
+      db.close();
+      if (err) {
+        console.error("Erro ao verificar CPF:", err);
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    });
+  });
+}
+
 
 //#################################################### FUNÇOES DE CADASTRO ###################################################
+
 
 // função cadastrar funcionario 
 async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
   const db = await conn();
-  if (tipoFuncionario === "gerente") {
-    const gerente = await verificarGerente(tipoFuncionario);
-    if (gerente.length > 0) {
-      return { success: false, error: "Já existe um gerente cadastrado!"}; 
+
+  try{
+    if (tipoFuncionario === "gerente") {
+        const gerente = await verificarGerente(tipoFuncionario);
+         if (gerente.length > 0) {
+            throw new Error("Já existe um gerente cadastrado.");
+      }
     }
+    
+    if(cpf){
+      const existingCpf = await verificarCpf(cpf);
+      if(existingCpf.length > 0){
+        throw new Error("CPF já cadastrado.");
+      }
+    }
+    if(email){
+      const existingEmail = await verificarEmail(email);
+      if(existingEmail.length > 0){
+        throw new Error("E-mail já cadastrado.");
+      }
+
+    }
+  } catch (error) {
+    return { success: false, error: error.message };
   }
+
    const hash = await bcrypt.hash(senha, saltRounds);
   return new Promise((resolve) =>  {
 
@@ -245,8 +300,9 @@ async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
   });
 }
 
+// função cadastrar categoria
 async function cadastrarCategoria(nomeCategoria, status) {
-    
+
         const db = await conn(); 
         return new Promise((resolve) => {
             const query = `INSERT INTO tb_Categorias (nome, status) VALUES (?, ?)`;
@@ -259,7 +315,7 @@ async function cadastrarCategoria(nomeCategoria, status) {
         
 }
 
-
+// função cadastrar produto
 async function cadastrarProduto(nome, preco, categoria_id, descricao) {
   const db = await conn();
   return new Promise((resolve) => {
@@ -445,8 +501,7 @@ function criarTelaCadastroProduto() {
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
-    criarLoginWindow();
-    criarTelaGerente(); 
+  admWindow(); 
 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
