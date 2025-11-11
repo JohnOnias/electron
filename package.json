@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^38.5.0"
+    "electron": "^38.6.0"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
