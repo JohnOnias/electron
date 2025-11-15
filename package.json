@@ -2,7 +2,7 @@
   "name": "electron",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "src/app.js",
   "scripts": {
     "start": "electron ."
   },
@@ -10,13 +10,15 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^38.6.0"
+    "electron": "^38.6.0",
+    "sequelize-cli": "^6.6.3"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "bootstrap": "^5.3.8",
     "nodemailer": "^7.0.10",
+    "sequelize": "^6.37.7",
     "sqlite3": "^5.1.7"
   },
   "repository": {

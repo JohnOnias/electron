@@ -1,0 +1,14 @@
+{
+  "development": {
+    "database": "./src/public/BD/database.db",
+    "dialect": "sqlite"
+  },
+  "test": {
+    "database": "./src/public/BD/database_test.db",
+    "dialect": "sqlite"
+  },
+  "production": {
+    "database": "./src/public/BD/database_production.db",
+    "dialect": "sqlite"
+  }
+}
