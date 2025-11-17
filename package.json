@@ -2,10 +2,12 @@
   "name": "electron",
   "version": "1.0.0",
   "description": "",
-  "main": "src/app.js",
+  "main": "main.js",
+  "type": "module",
   "scripts": {
     "start": "electron ."
   },
+
   "keywords": [],
   "author": "",
   "license": "ISC",

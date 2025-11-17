@@ -1,12 +1,19 @@
-const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron');
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-const {session } = require('electron');
-const { rejects } = require('assert');
-const crypto = require("crypto");
-const nodemailer = require("nodemailer");
-const bcrypt = require("bcryptjs");
-const saltRounds = 10; 
+import { app, BrowserWindow, ipcMain, nativeTheme, session } from "electron";
+import sqlite3pkg from "sqlite3";
+const sqlite3 = sqlite3pkg.verbose();
+
+import path from "path";
+import { fileURLToPath } from "url";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
+import bcrypt from "bcryptjs";
+
+// Necessário porque ES Modules NÃO possui __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const saltRounds = 10;
+
 
 //######################################################## variaveis globais ##################################################
 let loginWindow = null; 
@@ -171,7 +178,7 @@ async function login(email, senha){
 
 
 // função para redefinir senha 
-async function verificarEmail(emailResetTest) {
+async function verificarEmaill(emailResetTest) {
     const db = await conn();
     return new Promise((resolve, reject) => {
         const query = `
@@ -217,7 +224,7 @@ async function verificarGerente(tipoFuncionario) {
 }
 
 // verifica se o email já está cadastrado
-async function verificarEmail(email){
+async function verificarEmailCadastrado(email){
   const db = await conn();
   return new Promise((resolve, reject) => {
     const query = `SELECT nome FROM tb_Funcionarios WHERE email = ?`;
@@ -480,24 +487,7 @@ async function admWindow(){
     return adm; 
 }
 
-// criar a tela de cadastro de funcionario 
-function criarTelaCadastroFuncionario() {
-    nativeTheme.themeSource = 'dark';
-    const win = new BrowserWindow({
-        width: 350,
-        height: 550,
-        resizable: false,
-        autoHideMenuBar: true,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            contextIsolation: true,
-            nodeIntegration: false 
-        }
-    });
-
-    win.loadFile('./src/views/admin/cadastroFuncionario.html');
-    return win; 
-}
+import { criarTelaCadastroFuncionario } from './src/models/cadastro/cadastroFuncionario.js';
 
 async function criarTelaVerificacaoToken() {
   nativeTheme.themeSource = 'dark';
@@ -576,8 +566,7 @@ function criarTelaCadastroProduto() {
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
-  admWindow(); 
-  criarTelaGerente();
+ criarTelaCadastroFuncionario();
 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
