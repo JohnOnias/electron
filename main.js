@@ -24,388 +24,18 @@ let VerificacaoToken = null;
 let currentUser = null; // armazenar temporariamente o usuário logado
 
 
-// ################################################## envio de emails #################################################################
-
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-        user: "ifce.electron.testes@gmail.com",       // seu e-mail
-        pass: "gnfedrphwmaaewiv"      // senha de app do Gmail
-    }});
-
-async function enviarTokenEmail(email, token) {
-    const mailOptions = {
-        from: '"App Recuperação de Senha" ifce.electron.testes@gmail.com',
-        to: email,
-        subject: "Recuperação de Senha",
-        html: `
-            <p>Você solicitou a redefinição de senha.</p>
-            <p>Use este token para redefinir sua senha:</p>
-            <h3>${token}</h3>
-            <p>O token expira em 15 minutos.</p>
-        `
-    }; return transporter.sendMail(mailOptions);
-}
-
-
-
-//################################################# GERAÇÃO DE TOKENS ######################################################
-// gera o token de reset
-function gerarToken() {
-    return crypto.randomBytes(32).toString("hex"); // token de 64 caracteres
-}
-function calcularExpiracao(minutos = 15) {
-    return Date.now() + minutos * 60 * 1000; // expira em X minutos
-}
-
-
-// ##################################################### VALIDAR TOKENS ########################################################
-
-async function validarToken(token) {
-    const db = await conn();
-    return new Promise((resolve, reject) => {
-        const query = `
-            SELECT 'Administrador' as tipo, id, reset_expires 
-            FROM tb_Administrador 
-            WHERE reset_token = ?
-            
-            UNION ALL
-            
-            SELECT 'Funcionario' as tipo, id, reset_expires 
-            FROM tb_Funcionarios 
-            WHERE reset_token = ?
-        `;
-        db.all(query, [token, token], (err, rows) => {
-            db.close();
-            if (err) return reject(err);
-            if (!rows || rows.length === 0) return resolve(null); // token não existe
-            const usuario = rows[0];
-            if (usuario.reset_expires < Date.now()) return resolve(null); // token expirado
-            resolve(usuario); // token válido
-        });
-    });
-    
-}
-// salva o token no banco
-async function salvarToken(email) {
-    const db = await conn();
-    const token = gerarToken();
-    const expiracao = calcularExpiracao(15);
-
-    return new Promise((resolve, reject) => {
-        // Atualiza token no Administrador
-        db.run(
-            `UPDATE tb_Administrador SET reset_token=?, reset_expires=? WHERE email=?`,
-            [token, expiracao, email],
-            function (err) {
-                if (err) {
-                    // Se não encontrar, tenta Funcionario
-                    db.run(
-                        `UPDATE tb_Funcionarios SET reset_token=?, reset_expires=? WHERE email=?`,
-                        [token, expiracao, email],
-                        function (err2) {
-                            db.close();
-                            if (err2) reject(err2);
-                            else resolve({ token, expiracao });
-                        }
-                    );
-                } else if (this.changes === 0) {
-                    // nenhum registro atualizado
-                    db.close();
-                    resolve(null);
-                } else {
-                    db.close();
-                    resolve({ token, expiracao });
-                }});});}
-
-
-
-// ##################################################### FUNÇOES LOGIN #########################################################################################
-
-
-async function login(email, senha){
-  const db = await conn();
-  
-  return new Promise((resolve, reject) => {
-    const query = `
-      SELECT tipo, id, nome, email, senha FROM (
-        SELECT 'adm' AS tipo, id, nome, email, senha
-        FROM tb_Administrador
-        WHERE email = ?
-        UNION ALL
-        SELECT tipo, id, nome, email, senha
-        FROM tb_Funcionarios
-        WHERE email = ?
-      ) LIMIT 1
-    `;
-
-    db.get(query, [email, email], async (err, usuario) => {
-      db.close();
-      if (err) return reject(err);
-      if (!usuario) return resolve(null); 
-
-      const senhaValida = await bcrypt.compare(senha, usuario.senha);
-      if (!senhaValida) return resolve(null); // senha incorreta
-
-     
-      resolve({
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        tipo: usuario.tipo 
-      });
-    });
-  });
-};
-
-   
-// ####################################### VERIFICAÇõES DE EMAIL, SENHA E TIPOS ##############################################################
-
-
-// função para redefinir senha 
-async function verificarEmaill(emailResetTest) {
-    const db = await conn();
-    return new Promise((resolve, reject) => {
-        const query = `
-            SELECT 'Administrador' as tipo, email 
-            FROM tb_Administrador
-            WHERE email = ?
-            UNION ALL
-            SELECT 'Funcionario' as tipo, email 
-            FROM tb_Funcionarios 
-            WHERE email = ?
-        `;
-        db.all(query, [emailResetTest, emailResetTest], (err, rows) => {
-            db.close(); 
-
-            if (err) {
-                console.error('Erro ao consultar email:', err);
-                reject(err);
-            } else {
-                if (rows.length > 0) {
-                    console.log('Email encontrado!');      
-                }
-                resolve(rows);
-            }
-        });
-    });
-}
-
-// verifica se existe um gerente cadastrado 
-async function verificarGerente(tipoFuncionario) {
-  const db = await conn();
-  return new Promise((resolve, reject) => {
-    const query = `SELECT id, nome FROM tb_Funcionarios WHERE tipo = ?`
-    db.all(query, [tipoFuncionario], (err, rows) => {
-      db.close();
-      if (err) {
-        console.error("Erro ao pesquisar gerente", err);
-        reject(err);
-        return;
-      }
-      resolve(rows); 
-    });
-  });
-}
-
-// verifica se o email já está cadastrado
-async function verificarEmailCadastrado(email){
-  const db = await conn();
-  return new Promise((resolve, reject) => {
-    const query = `SELECT nome FROM tb_Funcionarios WHERE email = ?`;
-    db.all(query, [email], (err, rows) => {
-      db.close();
-      if (err) {
-        console.error("Erro ao verificar e-mail:", err);
-        reject(err);
-      } else {
-        resolve(rows);
-      }
-    });
-  });
-}
-
-// verifica se o cpf já está cadastrado
-async function verificarCpf(cpf){
-  const db = await conn();
-  return new Promise((resolve, reject) => {
-    const query = `SELECT nome FROM tb_Funcionarios WHERE cpf = ?`;
-    db.all(query, [cpf], (err, row) => {
-      db.close();
-      if (err) {
-        console.error("Erro ao verificar CPF:", err);
-        reject(err);
-      } else {
-        resolve(row);
-      }
-    });
-  });
-}
-async function verificarMesa(db, numero_mesa) {
-  return new Promise((resolve, reject) => {
-    const query = `SELECT * FROM tb_Mesas WHERE numero = ?`;
-    db.all(query, [numero_mesa], (err, row) => {
-      if (err) {
-        console.error("Erro ao verificar mesa:", err);
-        reject(err);
-      } else {
-        resolve(row);
-      }
-    });
-  });
-}
-
-//#################################################### FUNÇÕES DE CADASTRO ###################################################
-
-async function cadastrarMesa(numero_mesa, status, n_cadeiras) {
-  const db = await conn();
-  try {
-
-    if (!numero_mesa) {
-      throw new Error("Número da mesa é obrigatório.");
-    }
-
-    const existingMesa = await verificarMesa(db, numero_mesa);
-    if (existingMesa.length > 0) {
-      throw new Error("Mesa já cadastrada.");
-    }
-
-    await new Promise((resolve, reject) => {
-      const query = `INSERT INTO tb_Mesas (numero, status, n_cadeiras) VALUES (?, ?, ?)`;
-      db.run(query, [numero_mesa, status, n_cadeiras], function(err) {
-        if (err) {
-          console.error("Erro ao cadastrar mesa:", err);
-          reject(err);
-        } else {
-          resolve(true);
-        }
-      });
-    });
-
-    return { success: true };
-  } catch (err) {
-    console.error(err.message);
-    return { success: false, error: err.message };
-  } finally {
-    db.close(); 
-  }
-}
-
-
-
-// função cadastrar funcionario 
 
 
 
 
 
-// função cadastrar categoria
-async function cadastrarCategoria(nomeCategoria, status) {
-
-        const db = await conn(); 
-        return new Promise((resolve) => {
-            const query = `INSERT INTO tb_Categorias (nome, status) VALUES (?, ?)`;
-            db.run(query, [nomeCategoria, status], function(err) {
-                db.close();
-                if (err) resolve({ success: false, error: err.message });
-                else resolve(true);
-            });
-        });
-        
-}
-
-
-// função cadastrar produto
 
 
 
-// ######################################### CRIAÇÃO DE TELAS ################################################################
 
 
-//cria a tela de login 
-async function criarLoginWindow() {
-    nativeTheme.themeSource = 'dark';
-    loginWindow = new BrowserWindow({  
-        width: 1920,
-        height: 1080,
-        resizable: true,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            contextIsolation: true, 
-            nodeIntegration: false
-        }
-    });
-    loginWindow.loadFile('./src/views/login/login.html');
-    
-    // Evento para limpar a referência quando a janela fechar
-    loginWindow.on('closed', () => {
-        loginWindow = null;
-    });
-    
-    return loginWindow; 
-}
 
-// cria a tela de cadastro de mesa
-async function criarTelaCadastroMesa() {
-  nativeTheme.themeSource = 'dark';
-  const win = new BrowserWindow({
-    width: 350,
-    height: 550,
-    resizable: false,
-    autoHideMenuBar: true,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true,
-      nodeIntegration: false
-    }
-  });
 
-  win.loadFile('./src/views/gerente/cadastroMesas.html');
-  return win;
-}
-
-// cria a tela de redefinirSenha
-
-async function criarTelaReset() {
-  nativeTheme.themeSource = 'dark';
-  resetWindow = new BrowserWindow ({
-    width: 450, 
-    height: 450, 
-    resizable: false, 
-    autoHideMenuBar: true,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true, 
-      nodeIntegration: false
-    }
-  });
-
-  resetWindow.loadFile('./src/views/login/ForgotPassword.html');
-
-  resetWindow.on('closed', () => {
-    resetWindow = null;
-  });
-
-  return resetWindow;
-}
-
-// criar tela de ADM
-
-async function admWindow(){
-    nativeTheme.themeSource = 'dark';
-    const adm = new BrowserWindow({
-        width: 1920,
-        height: 1080,
-        resizable: false,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            contextIsolation: true, 
-            nodeIntegration: false
-        }
-    });
-    adm.loadFile('./src/views/admin/admin.html');
-    return adm; 
-}
 
 
 
@@ -417,65 +47,16 @@ import { cadastrarProduto } from './src/models/cadastro/cadastroProduto.js';
 
 import { criarTelaCadastroProduto } from './src/models/cadastro/cadastroProduto.js';
 
+import { login } from './src/models/login/login.js';
+import { getProdutosID } from "./src/models/gets/produtos.js";
+import { getMesas } from "./src/models/gets/mesas.js";
+import { criarTelaGerente } from "./src/models/gerente/gerenteWindow.js";
+import { criarTelaVerificacaoToken,  } from "./src/models/reset/tokenWindow.js";
+import { criarTelaReset } from "./src/models/reset/resetWindow.js";
 
 
 
-async function criarTelaVerificacaoToken() {
-  nativeTheme.themeSource = 'dark';
-  VerificacaoToken = new BrowserWindow ({
-    width: 450, 
-    height: 450, 
-    resizable: false, 
-    autoHideMenuBar: true,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
-      contextIsolation: true, 
-      nodeIntegration: false
-    }
-  });
 
-  VerificacaoToken.loadFile('./src/views/login/reset.html');
-  VerificacaoToken.on('closed', () => {
-    VerificacaoToken = null;
-  });
-
-  return VerificacaoToken;
-}
-// cria a tela de gerente
-
-async function criarTelaGerente() {
-    nativeTheme.themeSource = 'dark';
-    const win = new BrowserWindow({
-        width: 1920,
-        height: 1080,
-        resizable: false,
-        autoHideMenuBar: true,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            contextIsolation: true,
-            nodeIntegration: true
-        }
-    });
-    win.loadFile('./src/views/gerente/gerente.html'); 
-    return win;
-}
-
-// cria a tela de cadastro categoria
-function criarTelaCadastroCategoria() {
-    nativeTheme.themeSource = 'dark';
-    const win = new BrowserWindow({
-        width: 350,
-        height: 550,
-        resizable: false,
-        autoHideMenuBar: true,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            contextIsolation: true,
-            nodeIntegration: true
-        }
-    });
-    win.loadFile('./src/views/gerente/cadastroCategoria.html'); 
-}
 
 
 // aqui chama a janela principal quando se clica no app
@@ -648,36 +229,17 @@ ipcMain.handle('abrirTelaAdm', async () => {
 });
 
 ipcMain.handle('get-categorias', async (event) => {
-    const db = await conn(); 
-  return new Promise((resolve, reject) => {
-    db.all("SELECT id, nome, status FROM tb_Categorias", [], (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
-    });
-  });
+   return await getCategoria();
 });
 
 ipcMain.handle('get-mesas', async (event) => {
-  const db = await conn();
-
-  return new Promise((resolve, reject) => {
-    db.all("SELECT id, numero, status, n_cadeiras FROM tb_Mesas order by numero", [], (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows); 
-    });
-  });
+  
+    return await getMesas(); 
 });
 
 ipcMain.handle('get-produtos-por-categoria', async (event, idCategoria) => {
-  console.log("teste id categoria:", idCategoria);
-    const db = await conn();
-    return new Promise((resolve, reject) => {
-        const query = `SELECT id, nome, preco, descricao FROM tb_Produtos WHERE categoria_id = ?`;  
-        db.all(query, [idCategoria], (err, rows) => {
-            if (err) reject(err);
-            else resolve(rows);
-        });
-    });
+  return await getProdutosID(idCategoria);
+  
 });
 ipcMain.handle('abrirCadastroMesa', async (event) => {
      await criarTelaCadastroMesa();

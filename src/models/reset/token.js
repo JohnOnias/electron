@@ -1,0 +1,62 @@
+import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import {conn } from '../db/conn.js';
+
+
+// Necessário em ES Modules para obter __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+
+
+
+export async function salvarToken(email) {
+    const db = await conn();
+    const token = gerarToken();
+    const expiracao = calcularExpiracao(15);
+
+    return new Promise((resolve, reject) => {
+        // Atualiza token no Administrador
+        db.run(
+            `UPDATE tb_Administrador SET reset_token=?, reset_expires=? WHERE email=?`,
+            [token, expiracao, email],
+            function (err) {
+                if (err) {
+                    // Se não encontrar, tenta Funcionario
+                    db.run(
+                        `UPDATE tb_Funcionarios SET reset_token=?, reset_expires=? WHERE email=?`,
+                        [token, expiracao, email],
+                        function (err2) {
+                            db.close();
+                            if (err2) reject(err2);
+                            else resolve({ token, expiracao });
+                        }
+                    );
+                } else if (this.changes === 0) {
+                    // nenhum registro atualizado
+                    db.close();
+                    resolve(null);
+                } else {
+                    db.close();
+                    resolve({ token, expiracao });
+                }});});}
+
+
+
+
+export function gerarToken() {
+    return crypto.randomBytes(32).toString("hex"); // token de 64 caracteres
+}
+export function calcularExpiracao(minutos = 15) {
+    return Date.now() + minutos * 60 * 1000; // expira em X minutos
+}
+
+
+export const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "ifce.electron.testes@gmail.com",       // seu e-mail
+        pass: "gnfedrphwmaaewiv"      // senha de app do Gmail
+    }});
