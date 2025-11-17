@@ -25,28 +25,11 @@ let currentUser = null; // armazenar temporariamente o usuário logado
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//################################ imports #######################################
 import { criarTelaCadastroFuncionario } from './src/models/cadastro/cadastroFuncionario.js';
-
 import { cadastrarFuncionario } from './src/models/cadastro/cadastroFuncionario.js';
-
 import { cadastrarProduto } from './src/models/cadastro/cadastroProduto.js';
-
 import { criarTelaCadastroProduto } from './src/models/cadastro/cadastroProduto.js';
-
 import { login } from './src/models/login/login.js';
 import { getProdutosID } from "./src/models/gets/produtos.js";
 import { getMesas } from "./src/models/gets/mesas.js";
@@ -61,7 +44,7 @@ import { criarTelaReset } from "./src/models/reset/resetWindow.js";
 
 // aqui chama a janela principal quando se clica no app
 app.whenReady().then(() => {
- criarTelaCadastroFuncionario();
+ 
 
 
 // so abre outra janela se todas estiverem fechadas (para MAC)
@@ -125,12 +108,10 @@ ipcMain.handle("chamar-redefinir", async(event, emailResetTest) => {
 });
 
 
-
 // chama a tela de cadastro de categoria 
 ipcMain.handle('abrirCadastroCategoria', async () => {
     return await criarTelaCadastroCategoria();
 });
-
 
 // abre a tela de verificação de token
 ipcMain.handle("abrirTelaDeVerificacaoToken", async () => {
@@ -158,6 +139,7 @@ ipcMain.handle("gerar-token", async (event, email) => {
     }
     return resultado; 
 });
+
 // enviar token por email
 ipcMain.handle("gerar-e-enviar-token", async (event, email) => {
     const resultado = await salvarToken(email); // gera token e salva no DB
@@ -187,15 +169,13 @@ ipcMain.handle("resetar-senha", async (event, token, novaSenha) => {
 
 // abrir tela de cadastro funcionario
 ipcMain.handle("abrirCadastroFuncionario", async(event)=>{
-       await criarTelaCadastroFuncionario(); 
-        
+       await criarTelaCadastroFuncionario();    
 });
 
 
 // abrir tela de cadastro produtos
 ipcMain.handle("abrirCadastroProduto", async(event)=>{
-       await criarTelaCadastroProduto(); 
-        
+       await criarTelaCadastroProduto();   
 });
 
 // chama a tela de gerente 
