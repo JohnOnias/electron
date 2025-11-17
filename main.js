@@ -118,21 +118,6 @@ async function salvarToken(email) {
                     resolve({ token, expiracao });
                 }});});}
 
-// ################################################### FUNÇOES BANCO DE DADOS #############################################
-
-// conexão com o banco de dados
-function conn() {
-    return new Promise((resolve, reject) => {
-        const db = new sqlite3.Database(
-            path.join(__dirname, './src/public/BD/database.db'), 
-            (err) => {
-                if (err) {
-                    console.error('Database connection failed:', err); 
-                    reject(err);
-                } else {
-                    console.log('Database connected!'); 
-                    resolve(db);
-}});});}
 
 
 // ##################################################### FUNÇOES LOGIN #########################################################################################
@@ -309,55 +294,7 @@ async function cadastrarMesa(numero_mesa, status, n_cadeiras) {
 
 
 // função cadastrar funcionario 
-async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
-  const db = await conn();
 
-  try{
-    if (tipoFuncionario === "gerente") {
-        const existirGerente = await verificarGerente(tipoFuncionario);
-         if (existirGerente.length > 0) {
-            throw new Error("Já existe um gerente cadastrado.");
-      }
-    }
-    
-    if(cpf){
-      const existingCpf = await verificarCpf(cpf);
-      if(existingCpf.length > 0){
-        throw new Error("CPF já cadastrado.");
-      }
-    }
-    if(email){
-      const existingEmail = await verificarEmail(email);
-      if(existingEmail.length > 0){
-        throw new Error("E-mail já cadastrado.");
-      }
-
-    }
-  } catch (err) {
-    db.close();
-    return { success: false, error: err.message };
-  } 
-  try {
-   const hash = await bcrypt.hash(senha, saltRounds);
-    await new Promise((resolve, reject) => {
-      const query = `
-        INSERT INTO tb_Funcionarios (nome, cpf, email, senha, tipo)
-        VALUES (?, ?, ?, ?, ?)
-      `;
-      db.run(query, [nome, cpf, email, hash, tipoFuncionario], function (err) {
-        if (err) reject(err);
-        else resolve();
-      });
-    });
-
-    db.close();
-    return { success: true };
-
-  } catch (err) {
-    db.close();
-    return { success: false, error: err.message };
-  }
-}
 
 
 
@@ -379,24 +316,7 @@ async function cadastrarCategoria(nomeCategoria, status) {
 
 
 // função cadastrar produto
-async function cadastrarProduto(nome, preco, categoria_id, descricao) {
-  const db = await conn();
-  return new Promise((resolve) => {
-    const query = `
-      INSERT INTO tb_Produtos (nome, preco, categoria_id, descricao)
-      VALUES (?, ?, ?, ?)
-    `;
-    db.run(query, [nome, preco, categoria_id, descricao], function (err) {
-      if (err) {
-        resolve({ success: false, error: err.message });
-      } else {
-        // retornar true para indicar sucesso, consistente com outras rotas
-        resolve(true);
-      }
-      db.close();
-    });
-  });
-}
+
 
 
 // ######################################### CRIAÇÃO DE TELAS ################################################################
@@ -487,7 +407,18 @@ async function admWindow(){
     return adm; 
 }
 
+
+
 import { criarTelaCadastroFuncionario } from './src/models/cadastro/cadastroFuncionario.js';
+
+import { cadastrarFuncionario } from './src/models/cadastro/cadastroFuncionario.js';
+
+import { cadastrarProduto } from './src/models/cadastro/cadastroProduto.js';
+
+import { criarTelaCadastroProduto } from './src/models/cadastro/cadastroProduto.js';
+
+
+
 
 async function criarTelaVerificacaoToken() {
   nativeTheme.themeSource = 'dark';
@@ -544,23 +475,6 @@ function criarTelaCadastroCategoria() {
         }
     });
     win.loadFile('./src/views/gerente/cadastroCategoria.html'); 
-}
-
-// tela de cadastro de produto
-function criarTelaCadastroProduto() {
-    nativeTheme.themeSource = 'dark';
-    const win = new BrowserWindow({
-        width: 350,
-        height: 550,
-        resizable: false,
-        autoHideMenuBar: true,
-        webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
-            contextIsolation: true,
-            nodeIntegration: true
-        }
-    });
-    win.loadFile('./src/views/gerente/cadastroProduto.html'); 
 }
 
 
