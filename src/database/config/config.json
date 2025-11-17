@@ -1,6 +1,6 @@
 {
   "development": {
-    "database": "./src/public/BD/database.db",
+    "database": "./db/database.db",
     "dialect": "sqlite"
   },
   "test": {

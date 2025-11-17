@@ -16,31 +16,31 @@ contextBridge.exposeInMainWorld("api", {
     abrirTelaDeVerificacaoToken: () => ipcRenderer.invoke("abrirTelaDeVerificacaoToken"),
 
     // Adm
-    cadastrarFuncionario: (nome, cpf, email, cargo, senha) =>
-        ipcRenderer.invoke("cadastrar-funcionario", nome, cpf, email, cargo, senha),
-    abrirTelaDeCadastroFuncionario: () => ipcRenderer.invoke("abrirCadastroFuncionario"),
+    //cadastrarFuncionario: (nome, cpf, email, cargo, senha) =>
+        //ipcRenderer.invoke("cadastrar-funcionario", nome, cpf, email, cargo, senha),
+    //abrirTelaDeCadastroFuncionario: () => ipcRenderer.invoke("abrirCadastroFuncionario"),
     abrirTelaAdm: () => ipcRenderer.invoke("abrirTelaAdm")
    ,
 
     // Categoria
-    cadastrarCategoria: (nomeCategoria, status) => ipcRenderer.invoke("cadastrar-categoria", nomeCategoria, status),
-    abrirCadastroCategoria: () => ipcRenderer.invoke("abrirCadastroCategoria"),
-    getCategorias: () => ipcRenderer.invoke("get-categorias"),
+    //cadastrarCategoria: (nomeCategoria, status) => ipcRenderer.invoke("cadastrar-categoria", nomeCategoria, status),
+    //abrirCadastroCategoria: () => ipcRenderer.invoke("abrirCadastroCategoria"),
+    //getCategorias: () => ipcRenderer.invoke("get-categorias"),
 
     // Gerente
     abrirTelaGerente: () => ipcRenderer.invoke("abrirTelaGerente"),
-    abrirCadastroProduto: () => ipcRenderer.invoke("abrirCadastroProduto"),
+    //abrirCadastroProduto: () => ipcRenderer.invoke("abrirCadastroProduto"),
 
     // Current user (set after login, read from other windows)
     setCurrentUser: (usuario) => ipcRenderer.invoke('set-current-user', usuario),
     getCurrentUser: () => ipcRenderer.invoke('get-current-user'),
 
 
-    cadastrarProduto: (nome, preco, categoria, descricao) => ipcRenderer.invoke("cadastrarProduto", nome, preco, categoria, descricao),
-    getMesas: () => ipcRenderer.invoke("get-mesas"),
-    getProdutosPorCategoria: (idCategoria) => ipcRenderer.invoke("get-produtos-por-categoria", idCategoria),
-    abrirCadastroMesa: () => ipcRenderer.invoke("abrirCadastroMesa"),
-    cadastrarMesa: (numero_mesa, status, n_cadeiras) => ipcRenderer.invoke("cadastro-mesa", numero_mesa, status, n_cadeiras)
+    //cadastrarProduto: (nome, preco, categoria, descricao) => ipcRenderer.invoke("cadastrarProduto", nome, preco, categoria, descricao),
+    //getMesas: () => ipcRenderer.invoke("get-mesas"),
+    //getProdutosPorCategoria: (idCategoria) => ipcRenderer.invoke("get-produtos-por-categoria", idCategoria),
+    //abrirCadastroMesa: () => ipcRenderer.invoke("abrirCadastroMesa"),
+    //cadastrarMesa: (numero_mesa, status, n_cadeiras) => ipcRenderer.invoke("cadastro-mesa", numero_mesa, status, n_cadeiras)
 
 
 
