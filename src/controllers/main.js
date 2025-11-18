@@ -1,16 +1,10 @@
 // ============================================================
 // Imports principais
+
+
+// subdividir o main em controllers cada um com sua resposabilidade
 // ============================================================
-import { app, BrowserWindow, ipcMain, nativeTheme, session } from "electron";
-import sqlite3pkg from "sqlite3";
-import path from "path";
-import { fileURLToPath } from "url";
-
-const sqlite3 = sqlite3pkg.verbose();
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const saltRounds = 10;
+import { app, BrowserWindow, ipcMain } from "electron";
 
 
 // ============================================================
@@ -18,8 +12,6 @@ const saltRounds = 10;
 // ============================================================
 let loginWindow = null;
 let resetWindow = null;
-let tokenWindow = null;
-let adm = null;
 let VerificacaoToken = null;
 let currentUser = null;
 
@@ -29,13 +21,13 @@ let currentUser = null;
 // ============================================================
 
 // cadastro
-import { criarTelaCadastroFuncionario, cadastrarFuncionario } from '../models/cadastro/cadastroFuncionario.js';
-import { criarTelaCadastroProduto, cadastrarProduto } from '../models/cadastro/cadastroProduto.js';
+import { criarTelaCadastroFuncionario, cadastrarFuncionario } from '../models/cadastro/funcionario.js';
+import { criarTelaCadastroProduto, cadastrarProduto } from '../models/cadastro/produto.js';
 import { criarTelaCadastroCategoria, cadastrarCategoria } from "../models/cadastro/categoria.js";
 import { criarTelaCadastroMesa, cadastrarMesa } from "../models/cadastro/mesa.js";
 
 // gets
-import { getProdutosID } from "../models/cadastro/cadastroProduto.js";
+import { getProdutosID } from "../models/cadastro/produto.js";
 import { getMesas } from "../models/cadastro/mesas.js";
 import { getCategoria } from "../models/cadastro/categoria.js";
 
