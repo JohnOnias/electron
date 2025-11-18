@@ -1,6 +1,5 @@
 
 
-
 export async function verificarMesa(db, numero_mesa) {
   return new Promise((resolve, reject) => {
     const query = `SELECT * FROM tb_Mesas WHERE numero = ?`;

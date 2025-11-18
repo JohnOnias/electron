@@ -1,28 +1,27 @@
 const form = document.getElementById('formCadastro');
-let campoCPF = document.getElementById('cpf');
+const campoCPF = document.getElementById('cpf');
 
+// Máscara de CPF automática e robusta
+campoCPF.addEventListener('input', function () {
+    let valor = this.value.replace(/\D/g, ""); // remove tudo que não é número
 
-campoCPF.addEventListener('keypress', function(e)  {
-    let tamanhoCampo = e.target.value.length;
-    if (tamanhoCampo == 3) {
-        e.target.value += '.';
+    if (valor.length > 11) valor = valor.slice(0, 11);
+
+    // Aplica máscara
+    if (valor.length > 9) {
+        valor = valor.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, "$1.$2.$3-$4");
+    } else if (valor.length > 6) {
+        valor = valor.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
+    } else if (valor.length > 3) {
+        valor = valor.replace(/(\d{3})(\d{1,3})/, "$1.$2");
     }
-    if (tamanhoCampo == 7) {
-        e.target.value += '.';
-    }
-    if (tamanhoCampo == 11) {
-        e.target.value += '-';
-    }
-    if (tamanhoCampo >= 14) {
-        e.preventDefault();
-    }
-       
-    
+
+    this.value = valor;
 });
+
 
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    
 
     const nome = document.getElementById('nome').value;
     const cpf = document.getElementById('cpf').value;
@@ -31,19 +30,18 @@ form.addEventListener("submit", async (event) => {
     const confirmarSenha = document.getElementById('confirmarSenha').value;
     const tipoFuncionario = document.getElementById('tipoFuncionario').value;
 
-
+    // Validação do HTML5
     if (!form.checkValidity()) {
         form.reportValidity();
         return;
     }
 
- 
+    // Validação manual
     if (senha !== confirmarSenha) {
         alert("As senhas não conferem!");
         return;
     }
 
-    
     try {
         const resultado = await window.api.cadastrarFuncionario(
             nome, cpf, email, senha, tipoFuncionario

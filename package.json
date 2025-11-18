@@ -2,18 +2,17 @@
   "name": "electron",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "src/controllers/main.js",
   "type": "module",
   "scripts": {
     "start": "electron ."
   },
-
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^38.6.0",
-    "sequelize-cli": "^6.6.3"
+    "electron": "^38.7.0",
+    "sequelize-cli": "^6.6.2"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

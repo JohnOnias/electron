@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require("electron");
+import { ipcRenderer, contextBridge } from "electron";
 
 contextBridge.exposeInMainWorld("api", {
     cadastrarProduto: (nome, preco, categoria, descricao) => ipcRenderer.invoke("cadastrarProduto", nome, preco, categoria, descricao),
