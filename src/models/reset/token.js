@@ -60,3 +60,21 @@ export const transporter = nodemailer.createTransport({
         user: "ifce.electron.testes@gmail.com",       // seu e-mail
         pass: "gnfedrphwmaaewiv"      // senha de app do Gmail
     }});
+
+
+
+
+    
+     export async function enviarTokenEmail(email, token) {
+    const mailOptions = {
+        from: '"App Recuperação de Senha" ifce.electron.testes@gmail.com',
+        to: email,
+        subject: "Recuperação de Senha",
+        html: `
+            <p>Você solicitou a redefinição de senha.</p>
+            <p>Use este token para redefinir sua senha:</p>
+            <h3>${token}</h3>
+            <p>O token expira em 15 minutos.</p>
+        `
+    }; return transporter.sendMail(mailOptions);
+}

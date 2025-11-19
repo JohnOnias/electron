@@ -1,5 +1,5 @@
 
-import {conn } from '../db/conn.js';
+import {conn } from '../../database/db/conn.js';
 
 
 export async function cadastrarMesa(numero_mesa, status, n_cadeiras) {

@@ -32,24 +32,34 @@ let currentUser = null;
 import { criarTelaCadastroFuncionario, cadastrarFuncionario } from '../models/cadastro/cadastroFuncionario.js';
 import { criarTelaCadastroProduto, cadastrarProduto } from '../models/cadastro/cadastroProduto.js';
 import { criarTelaCadastroCategoria, cadastrarCategoria } from "../models/cadastro/categoria.js";
-import { criarTelaCadastroMesa, cadastrarMesa } from "../models/cadastro/mesa.js";
+import { getMesas, cadastrarMesa } from "../models/cadastro/mesa.js";
 
 // gets
 import { getProdutosID } from "../models/cadastro/cadastroProduto.js";
-import { getMesas } from "../models/cadastro/mesas.js";
 import { getCategoria } from "../models/cadastro/categoria.js";
 
 // login
 import { login } from '../models/login/login.js';
+//import { setCurrentUser, getCurrentUser } from '../models/login/currentUser.js';
+import { criarTelaLogin } from '../screens/login/loginWindow.js';
 
 // gerente / adm
-import { criarTelaGerente } from "../views/gerente/js/gerenteWindow.js";
-import { admWindow } from "../views/admin/js/admWindow.js";
+import { criarTelaGerente } from "../screens/gerente/gerenteWindow.js";
+import { admWindow } from "../screens/adm/admWindow.js";
 
 // reset
-import { criarTelaVerificacaoToken } from "../models/reset/tokenWindow.js";
-import { criarTelaReset } from "../models/reset/resetWindow.js";
-import { verificarEmail, salvarToken, enviarTokenEmail, validarToken, atualizarSenha } from "../models/reset/resetFunctions.js";
+import { criarTelaVerificacaoToken } from "../screens/reset/tokenWindow.js";
+import { criarTelaReset } from "../screens/reset/resetWindow.js";
+import { salvarToken, enviarTokenEmail, validarToken} from "../models/reset/token.js";
+
+
+// verificaçãoes 
+
+import { verificarMesa } from "../models/cadastro/mesa.js";
+import crypto from "crypto";
+import {verificarEmail} from "../models/reset/resetFunctions.js";
+import nodemailer from "nodemailer";
+import {atualizarSenha} from "../models/reset/resetFunctions.js";
 
 
 
@@ -57,6 +67,7 @@ import { verificarEmail, salvarToken, enviarTokenEmail, validarToken, atualizarS
 // Inicialização do App
 // ============================================================
 app.whenReady().then(() => {
+  criarTelaLogin();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
