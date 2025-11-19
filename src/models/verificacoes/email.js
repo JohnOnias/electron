@@ -1,4 +1,4 @@
-import {conn } from '../db/conn.js';
+import {conn } from '../../database/db/conn.js';
 
 
 

@@ -1,8 +1,8 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
-import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import {conn } from '../db/conn.js';
+import {conn } from '../../database/db/conn.js';
+import nodemailer from "nodemailer";
+
 
 
 // Necessário em ES Modules para obter __dirname
@@ -77,4 +77,30 @@ export const transporter = nodemailer.createTransport({
             <p>O token expira em 15 minutos.</p>
         `
     }; return transporter.sendMail(mailOptions);
+}
+
+ export async function validarToken(token) {
+    const db = await conn();
+    return new Promise((resolve, reject) => {
+        const query = `
+            SELECT 'Administrador' as tipo, id, reset_expires 
+            FROM tb_Administrador 
+            WHERE reset_token = ?
+            
+            UNION ALL
+            
+            SELECT 'Funcionario' as tipo, id, reset_expires 
+            FROM tb_Funcionarios 
+            WHERE reset_token = ?
+        `;
+        db.all(query, [token, token], (err, rows) => {
+            db.close();
+            if (err) return reject(err);
+            if (!rows || rows.length === 0) return resolve(null); // token não existe
+            const usuario = rows[0];
+            if (usuario.reset_expires < Date.now()) return resolve(null); // token expirado
+            resolve(usuario); // token válido
+        });
+    });
+    
 }

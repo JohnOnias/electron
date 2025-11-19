@@ -1,8 +1,8 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
+import { BrowserWindow, nativeTheme } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import {conn } from '../db/conn.js';
+
 
 
 // Necessário em ES Modules para obter __dirname
@@ -22,6 +22,6 @@ export async function admWindow(){
             nodeIntegration: false
         }
     });
-    adm.loadFile('./src/views/admin/admin.html');
+    adm.loadFile('./src/views/adm/adm.html');
     return adm; 
 }

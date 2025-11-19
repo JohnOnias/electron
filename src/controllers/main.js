@@ -21,24 +21,15 @@ let currentUser = null;
 // ============================================================
 
 // cadastro
-import { criarTelaCadastroFuncionario, cadastrarFuncionario } from '../models/cadastro/funcionario.js';
-import { criarTelaCadastroProduto, cadastrarProduto } from '../models/cadastro/produto.js';
-import { criarTelaCadastroCategoria, cadastrarCategoria } from "../models/cadastro/categoria.js";
+import { cadastrarFuncionario } from '../models/cadastro/funcionario.js';
+import { cadastrarProduto, getProdutosID } from '../models/cadastro/produto.js';
+import { cadastrarCategoria, getCategoria } from "../models/cadastro/categoria.js";
 import { getMesas, cadastrarMesa } from "../models/cadastro/mesa.js";
-
-// gets
-<<<<<<< HEAD
-import { getProdutosID } from "../models/cadastro/cadastroProduto.js";
-=======
-import { getProdutosID } from "../models/cadastro/produto.js";
-import { getMesas } from "../models/cadastro/mesas.js";
->>>>>>> 8b4897892b870aebe1a154050bcda2822b1c3d80
-import { getCategoria } from "../models/cadastro/categoria.js";
 
 // login
 import { login } from '../models/login/login.js';
 //import { setCurrentUser, getCurrentUser } from '../models/login/currentUser.js';
-import { criarTelaLogin } from '../screens/login/loginWindow.js';
+import { criarLoginWindow } from '../screens/login/loginWindow.js';
 
 // gerente / adm
 import { criarTelaGerente } from "../screens/gerente/gerenteWindow.js";
@@ -52,11 +43,11 @@ import { salvarToken, enviarTokenEmail, validarToken} from "../models/reset/toke
 
 // verificaçãoes 
 
-import { verificarMesa } from "../models/cadastro/mesa.js";
+import { verificarMesa } from "../models/verificacoes/mesas.js";
 import crypto from "crypto";
-import {verificarEmail} from "../models/reset/resetFunctions.js";
+import {verificarEmailCadastrado} from "../models/verificacoes/email.js";
 import nodemailer from "nodemailer";
-import {atualizarSenha} from "../models/reset/resetFunctions.js";
+import {atualizarSenha} from "../models/reset/reset.js";
 
 
 
@@ -64,7 +55,8 @@ import {atualizarSenha} from "../models/reset/resetFunctions.js";
 // Inicialização do App
 // ============================================================
 app.whenReady().then(() => {
-  criarTelaLogin();
+  criarLoginWindow();
+
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -168,7 +160,7 @@ ipcMain.handle("fecharResetTela", async () => {
 });
 
 ipcMain.handle("chamar-redefinir", async (_, email) => {
-  return await verificarEmail(email);
+  return await verificarEmailCadastrado(email);
 });
 
 ipcMain.handle("abrirTelaDeVerificacaoToken", async () => {

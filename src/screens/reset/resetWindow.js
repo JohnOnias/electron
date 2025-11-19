@@ -18,7 +18,7 @@ export async function criarTelaReset() {
     resizable: false, 
     autoHideMenuBar: true,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, '../../router/reset/reset.js'),
       contextIsolation: true, 
       nodeIntegration: false
     }

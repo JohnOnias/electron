@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
+import { BrowserWindow,  nativeTheme } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -9,6 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
+export let loginWindow = null; 
 
 export async function criarLoginWindow() {
     nativeTheme.themeSource = 'dark';
@@ -17,7 +18,7 @@ export async function criarLoginWindow() {
         height: 1080,
         resizable: true,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: path.join(__dirname, '../../router/login/login.js'),
             contextIsolation: true, 
             nodeIntegration: false
         }
