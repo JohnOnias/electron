@@ -1,4 +1,6 @@
-import { ipcRenderer, contextBridge } from "electron";
+// router/login/login.js
+const { contextBridge, ipcRenderer } = require('electron');
+
 
 contextBridge.exposeInMainWorld("api", {
     // Login
