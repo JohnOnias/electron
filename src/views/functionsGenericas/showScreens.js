@@ -1,60 +1,70 @@
-import { visualizarProdutos } from "./showProducts";    
-
-export async function showScreens(id) {
+window.showScreens = async function (id) {
     document.querySelectorAll(".tela").forEach(tela => tela.style.display = "none");
+   
 
     const tela = document.getElementById("tela" + id);
+    if (!tela) return;
     tela.style.display = "block";
 
-// printar as mesas na tela de mesas
-    const mesas = await window.api.getMesas(); 
-    const container = document.getElementById('mesas-container');
+    // printar as mesas na tela de mesas
+    try {
+        const mesas = (window.api && window.api.getMesas) ? await window.api.getMesas() : [];
+        const container = document.getElementById('mesas-container');
+        if (container) {
+            container.innerHTML = "";
 
-    container.innerHTML = "";
+            mesas.forEach(m => {
+                const card = document.createElement('div');
+                card.classList.add('mesa-card');
 
-    mesas.forEach(m => {
-        const card = document.createElement('div');
-        card.classList.add('mesa-card');
+                const numeroFormatado = (m.numero < 10) ? `0${m.numero}` : m.numero;
+                card.innerHTML = `
+                    <div class="mesa-numero">${numeroFormatado}</div>
+                    <span class="status-badge ${m.status === "Disponivel" ? "disponivel" : "ocupada"}">
+                        ${m.status}
+                    </span>
+                `;
 
-       if(m.numero <10){
-        m.numero = "0"+m.numero; 
-       }
-        card.innerHTML = `
-            <div class="mesa-numero">${m.numero}</div>
-            <span 
-                 class="status-badge ${m.status === "Disponivel" ? "disponivel" : "ocupada"}">
-                ${m.status}
-            </span>
-        `;
+                // visualizarPedidos não está implementado; log para evitar erro
+                card.onclick = () => {
+                    if (window.visualizarPedidos) return window.visualizarPedidos(m.numero);
+                    console.log('Mesa clicada:', m.numero);
+                };
 
-        card.onclick = () => visualizarPedidos(m.numero);
-
-        container.appendChild(card);
-    });
-
-
+                container.appendChild(card);
+            });
+        }
+    } catch (err) {
+        console.warn('Erro carregando mesas:', err);
+    }
 
     // printar as categorias 
-    const categorias = await window.api.getCategorias(); 
-    const containerCategorias = document.getElementById('categorias-container');
+    try {
+        const categorias = (window.api && window.api.getCategorias) ? await window.api.getCategorias() : [];
+        const containerCategorias = document.getElementById('categorias-container');
+        if (containerCategorias) {
+            containerCategorias.innerHTML = "";
 
-    containerCategorias.innerHTML = "";
+            categorias.forEach(c => {
+                const card = document.createElement('div');
+                card.classList.add('mesa-card');
 
-    categorias.forEach(c => {
-        const card = document.createElement('div');
-        card.classList.add('mesa-card');
-       
-        card.innerHTML = `
-            <div class="mesa-numero">${c.nome}</div>
-            <span
-                    class="status-badge ${c.status === "Ativa" ? "disponivel" : "ocupada"}">
-                ${c.status}
-            </span>
-        `;
+                card.innerHTML = `
+                    <div class="mesa-numero">${c.nome}</div>
+                    <span class="status-badge ${c.status === "Ativa" ? "disponivel" : "ocupada"}">
+                        ${c.status}
+                    </span>
+                `;
 
-        card.onclick = () => visualizarProdutos(c.id, c.nome, c.status);
+                card.onclick = () => {
+                    if (window.visualizarProdutos) return window.visualizarProdutos(c.id, c.nome, c.status);
+                    console.log('Categoria clicada:', c.id);
+                };
 
-        containerCategorias.appendChild(card);
-    });
-
-}
+                containerCategorias.appendChild(card);
+            });
+        }
+    } catch (err) {
+        console.warn('Erro carregando categorias:', err);
+    }
+};

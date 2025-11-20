@@ -1,11 +1,9 @@
-import { ipcRenderer, contextBridge } from "electron";
+const { ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld("api", {
-
-
-    getCategorias: () => ipcRenderer.invoke("get-categorias"),
-    cadastrarCategoria: (nomeCategoria, status) => ipcRenderer.invoke("cadastrar-categoria", nomeCategoria, status),
-    abrirCadastroCategoria: () => ipcRenderer.invoke("abrirCadastroCategoria")
-  
-
-});
+module.exports = {
+    categoriaAPI: {
+        getCategorias: () => ipcRenderer.invoke('get-categorias'),
+        cadastrarCategoria: (nomeCategoria, status) => ipcRenderer.invoke('cadastrar-categoria', nomeCategoria, status),
+        abrirCadastroCategoria: () => ipcRenderer.invoke('abrirCadastroCategoria')
+    }
+};

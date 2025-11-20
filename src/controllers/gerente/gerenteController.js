@@ -1,6 +1,10 @@
 import { ipcMain } from "electron";
 import { criarTelaGerente } from '../../screens/gerente/gerenteWindow.js';
 import { getLoginWindow} from '../../screens/login/loginWindow.js';
+//import{categoriaController} from '../../controllers/cadastro/cadastroController.js';
+
+
+
 const loginWindow = getLoginWindow();
 
 export function gerenteController() {

@@ -17,9 +17,9 @@
       </div>
       <nav>
         <ul>
-          <li class="menu"> <img src="./src/img/menu/pedidos.png" alt="icone pedidos"> <a href="#" onclick="mostrarTela('Mesas')">Mesas e Pedidos</a></li>
-          <li class="menu"> <img src="./src/img/menu/produtos.png" alt="icone produtos"> <a href="#" onclick="mostrarTela('Categorias')">Produtos e Categorias</a></li>
-          <li class="menu"> <img src="./src/img/menu/cadastros.png" alt="icone cadastros"> <a href="#" onclick="mostrarTela('Cadastros')">Cadastro</a></li>
+          <li class="menu"> <img src="../../img/menu/pedidos.png" alt="icone pedidos"> <a href="#" id="btnMesas" onclick="showScreens('Mesas')">Mesas e Pedidos</a></li>
+          <li class="menu"> <img src="../../img/menu/produtos.png" alt="icone produtos"> <a href="#" id="btnCategorias" onclick="showScreens('Categorias')">Produtos e Categorias</a></li>
+          <li class="menu"> <img src="../../img/menu/cadastros.png" alt="icone cadastros"> <a href="#" id="btnCadastros" onclick="showScreens('Cadastros')">Cadastro</a></li>
         </ul>
       </nav>
     </aside>
@@ -76,7 +76,7 @@
          <div id="telaCadastros" class="tela" style="display:none;">
             <h1>Cadastro</h1>
             <div class="containerConteudo">
-                <p>crie uma nova Categoria de Produtos</p>
+                <p>Crie uma nova Categoria de Produtos</p>
                 
                 <div class="divbnt">
                 <button class="bntPadrao" id="btnCadastrarCategoria">Criar Nova Categoria</button>   
@@ -111,6 +111,8 @@
     </main>
   </div>
 
-  <script src="js/gerente.js"></script>
+  <script src="../functionsGenericas/showProducts.js"></script>
+  <script src="../functionsGenericas/showScreens.js"></script>
+  <script src="js/gerenteView.js"></script>
 </body>
 </html>

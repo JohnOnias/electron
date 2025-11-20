@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
+import { BrowserWindow, nativeTheme } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -12,17 +12,17 @@ const __dirname = dirname(__filename);
 
 export async function criarTelaGerente() {
     nativeTheme.themeSource = 'dark';
-    const win = new BrowserWindow({
+    const gerenteWindow = new BrowserWindow({
         width: 1920,
         height: 1080,
         resizable: false,
-        autoHideMenuBar: true,
+        //autoHideMenuBar: true,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: path.join(__dirname, '..', '..', 'router', 'gerente', 'gerente.js'),
             contextIsolation: true,
-            nodeIntegration: true
+            nodeIntegration: false
         }
     });
-    win.loadFile('./src/views/gerente/gerente.html'); 
-    return win;
+    gerenteWindow.loadFile(path.join(__dirname, '..', '..', 'views', 'gerente', 'gerente.html')); 
+    return gerenteWindow;
 }

@@ -1,4 +1,4 @@
-export async function visualizarProdutos(id, nome, status) {
+window.visualizarProdutos = async function(id, nome, status) {
     // Oculta todas as telas
     document.querySelectorAll(".tela").forEach(tela => tela.style.display = "none");
 

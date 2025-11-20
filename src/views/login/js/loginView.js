@@ -1,61 +1,66 @@
-let resultado = null; 
-export let exportNome = null;
-const btn = document.querySelector('#entrar');
-const esqueciAsenha = document.getElementById('esqueci');
+let resultado = null;
+window.exportNome = null;
 
-
-
-
+document.addEventListener('DOMContentLoaded', () => {
    
-    btn.addEventListener("click", async (event) => {
-            event.preventDefault(); 
-            const email = document.getElementById('email').value;
-            const senha = document.getElementById('senha').value;
+    const btn = document.querySelector('#entrar');
+    const esqueciAsenha = document.getElementById('esqueci');
 
-            if (!email || !senha) {
-                alert('Por favor, preencha todos os campos.');
-            }
-            else{
+    if (!btn) {
+        console.error('Botão entrar não encontrado');
+        return;
+    }
+
+    btn.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const email = document.getElementById('email').value;
+        const senha = document.getElementById('senha').value;
+
+        if (!email || !senha) {
+            alert('Por favor, preencha todos os campos.');
+            return;
+        }
+
+        try {
+            const usuario = await window.api.login(email, senha);
+            window.exportNome = usuario && usuario.nome;
+
             try {
-                const usuario = await window.api.login(email, senha);
-                exportNome = usuario && usuario.nome;
-
-                try {
-                    await window.api.setCurrentUser(usuario);
-                } catch (err) {
-                    console.warn('Não foi possível setar current user via IPC:', err);
-                }
-                console.log('Login retornou:', usuario);
-
-                if (usuario) {
-                    alert('Login bem-sucedido!');
-
-                    if (usuario.tipo === "adm") {
-                        resultado = await window.api.abrirTelaAdm(); 
-                        if (resultado && resultado.success) await window.api.fecharLogin();
-                    } else if (usuario.tipo === "gerente") {
-                        resultado = await window.api.abrirTelaGerente(); 
-                        if (resultado && resultado.success) await window.api.fecharLogin();
-                    } else {
-                        console.log('Abrir painel do garçom');
-                    }
-
-                } else {
-                    alert('Email ou senha incorretos');
-                }
-
-            } catch (error) {
-                console.error('Erro ao chamar login:', error);
-                alert('Erro no login: ' + error);
+                await window.api.setCurrentUser(usuario);
+            } catch (err) {
+                console.warn('Não foi possível setar current user via IPC:', err);
             }
-    }}    
-);
-   
+            console.log('Login retornou:', usuario);
 
- 
-    esqueciAsenha.addEventListener('click', () => {
-         window.api.abrirReset(); 
+            if (usuario) {
+                alert('Login bem-sucedido!');
+
+                if (usuario.tipo === 'adm') {
+                    resultado = await window.api.abrirTelaAdm();
+                    if (resultado && resultado.success) await window.api.fecharLogin();
+                } else if (usuario.tipo === 'gerente') {
+                    resultado = await window.api.abrirTelaGerente();
+                    if (resultado && resultado.success) await window.api.fecharLogin();
+                } else {
+                    console.log('Abrir painel do garçom');
+                }
+
+            } else {
+                alert('Email ou senha incorretos');
+            }
+
+        } catch (error) {
+            console.error('Erro ao chamar login:', error);
+            alert('Erro no login: ' + error);
+        }
     });
+
+    if (esqueciAsenha) {
+        esqueciAsenha.addEventListener('click', () => {
+            window.api.abrirReset();
+        });
+    }
+});
     
 
 

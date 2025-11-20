@@ -1,4 +1,4 @@
-// src/controllers/login/loginController.js
+
 import { BrowserWindow, nativeTheme } from 'electron';
 import path from 'path';
 import { fileURLToPath } from 'url';

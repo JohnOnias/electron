@@ -9,13 +9,14 @@ import { app, BrowserWindow} from "electron";
 // ============================================================
 // home
 import { criarLoginWindow } from '../screens/login/loginWindow.js';
-
+import { criarTelaGerente } from "../screens/gerente/gerenteWindow.js";
 
 // ============================================================
 // Inicialização do App
 // ============================================================
 app.whenReady().then(() => {
-  criarLoginWindow();
+  //criarLoginWindow();
+  criarTelaGerente();
 
 // ============================================================
 // chamar os controllers
