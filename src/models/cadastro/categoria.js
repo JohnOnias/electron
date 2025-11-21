@@ -1,4 +1,5 @@
 import { conn } from "../../database/db/conn.js";
+
 export async function cadastrarCategoria(nomeCategoria, status) {
 
         const db = await conn(); 

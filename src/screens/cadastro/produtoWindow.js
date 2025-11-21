@@ -21,10 +21,10 @@ export function criarTelaCadastroProduto() {
         resizable: false,
         autoHideMenuBar: true,
         webPreferences: {
-            preload: path.join(__dirname, 'preload.js'),
+            preload: path.join(__dirname, '..','..','router', 'cadastro', 'cadastroProduto.js'),
             contextIsolation: true,
-            nodeIntegration: true
+            nodeIntegration: false
         }
     });
-    win.loadFile('./src/views/gerente/cadastroProduto.html'); 
+     win.loadFile(path.join(__dirname,'..','..','views', 'cadastro', 'cadastroProduto.html')); 
 }

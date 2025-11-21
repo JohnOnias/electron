@@ -18,12 +18,12 @@ export async function criarTelaCadastroMesa() {
     resizable: false,
     autoHideMenuBar: true,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, '..','..','router', 'cadastro', 'cadastroMesas.js'),
       contextIsolation: true,
       nodeIntegration: false
     }
   });
 
-  win.loadFile('./src/views/gerente/cadastroMesas.html');
+      win.loadFile(path.join(__dirname,'..','..','views', 'cadastro', 'cadastroMesas.html'));
   return win;
 }

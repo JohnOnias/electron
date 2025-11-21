@@ -1,4 +1,6 @@
 const { contextBridge, ipcRenderer } = require('electron');
+// testar 
+console.log('[preload-gerente] iniciando...');
 
 try {
     const api = {
@@ -23,8 +25,12 @@ try {
     };
 
     contextBridge.exposeInMainWorld('api', api);
-    try { console.log('[preload-gerente] exposed api keys:', Object.keys(api)); } catch (e) { console.log('[preload-gerente] exposed api (could not list keys)', e); }
+    console.log('[preload-gerente] API exposta com sucesso - keys:', Object.keys(api));
 } catch (err) {
-    console.error('[preload-gerente] error during preload execution:', err);
-    throw err;
+    console.error('[preload-gerente] ERRO ao carregar preload:', err);
+    // Expõe um stub mínimo para evitar crashes
+    contextBridge.exposeInMainWorld('api', {
+        getCurrentUser: () => ipcRenderer.invoke('get-current-user'),
+        setCurrentUser: (usuario) => ipcRenderer.invoke('set-current-user', usuario)
+    });
 }

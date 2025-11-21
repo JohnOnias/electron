@@ -1,4 +1,5 @@
-addEventListener('DOMContentLoaded', () => {
+
+document.addEventListener('DOMContentLoaded', () => {
 
 
     const btnCategoria = document.getElementById('enviarCategoria');

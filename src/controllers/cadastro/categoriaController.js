@@ -6,7 +6,8 @@ import { cadastrarCategoria, getCategoria } from '../../models/cadastro/categori
 export function categoriaController() {
 
   ipcMain.handle("abrirCadastroCategoria", async () => {
-    return await criarTelaCadastroCategoria();
+    await criarTelaCadastroCategoria();
+    return { success: true };
   });
 
   ipcMain.handle("cadastrar-categoria", async (_, nomeCategoria, status) => {
