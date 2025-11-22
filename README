@@ -1,4 +1,18 @@
-# REQUISITOS PARA RODAR O PROJETO:
+# CREDENCIAIS PARA TESTAR O USO
+
+**adm:** 
+    email: adm@adm.com
+    senha: adm123
+**gerente:**
+    email: gerente@gerente.com
+    senha: gerente123
+**garçom:**
+    email: garcom@garcom.com
+    senha: garcom123
+
+
+
+### REQUISITOS PARA RODAR O PROJETO: #####
 
 - node instalado
 - vs code instalado
