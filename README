@@ -1,0 +1,42 @@
+# REQUISITOS PARA RODAR O PROJETO:
+
+- node instalado
+- vs code instalado
+- git instalado
+
+# faça o clone do repositorio na sua maquina:
+   
+   - git clone <link do projeto>
+
+# entre na pasta do projeto, abra um terminal e rode:
+ 
+- npm electron install
+- npm sqlite3 install
+
+# para fazer o app iniciar rode:
+
+- npm start
+
+**observação**: algumas maquinas não rodam node pelo powershell(n sei pq) então se der erro, abra um terminal CMD e tente por la.
+
+# se for fazer uma funcionalidade nova crie uma branch nova:
+
+ - git checkout -b <nome da branch nova>
+ - git status  (para ter certeza que esta na branch nova)
+
+
+# pra subir na branch:
+
+ - git add .
+ - git commit -m "<mensagem do commit>"
+ - git status (para ver se adcionou tudo que quer e se esta na branch certa)
+ - git push origin <nome da branch que quer mandar>
+
+# para mudar de uma branch pra outra:
+
+ - git status (para saber em que branch esta)
+ - git checkout <nome da branch que quer ir>
+ - git status (pra saber em que branch esta)
+
+
+

@@ -11,6 +11,7 @@ let loginWindow = null;
 
 // função para criar a janela
 export async function criarLoginWindow() {
+    
     if (loginWindow && !loginWindow.isDestroyed()) return loginWindow;
 
     nativeTheme.themeSource = 'dark';

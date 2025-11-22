@@ -2,8 +2,9 @@ import { ipcMain } from "electron";
 import { login } from '../../models/login/login.js';
 import { getLoginWindow } from '../../screens/login/loginWindow.js';
 export const loginWindow = getLoginWindow();
+
 export function loginController() {
-       
+    
     ipcMain.handle("login", async (_, email, senha) => {
         return await login(email, senha);
     });

@@ -5,9 +5,10 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld("api", {
     // Login
     login: (email, senha) => ipcRenderer.invoke("login", email, senha),
+    fecharLogin: () => ipcRenderer.invoke('fecharLogin'),
 
     // Redefinir senha
-    fecharLogin: () => ipcRenderer.invoke('fecharLogin'),
+    
     chamarReset: (emailResetTest) => ipcRenderer.invoke("chamar-redefinir", emailResetTest),
     abrirReset: () => ipcRenderer.invoke('abrirResetTela'),
     fecharReset: () => ipcRenderer.invoke('fecharResetTela'),
