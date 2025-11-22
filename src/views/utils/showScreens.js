@@ -68,3 +68,5 @@ window.showScreens = async function (id) {
         console.warn('Erro carregando categorias:', err);
     }
 };
+
+

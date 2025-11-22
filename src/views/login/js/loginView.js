@@ -41,9 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (usuario.tipo === 'gerente') {
                     resultado = await window.api.abrirTelaGerente();
                     if (resultado && resultado.success) await window.api.fecharLogin();
-                } else {
-                    console.log('Abrir painel do garçom');
+                } else if (usuario.tipo === 'garçom') {
+                    resultado = await window.api.abrirTelaGarcom();
+                    if (resultado && resultado.success) await window.api.fecharLogin(); 
                 }
+                    
+                
 
             } else {
                 alert('Email ou senha incorretos');

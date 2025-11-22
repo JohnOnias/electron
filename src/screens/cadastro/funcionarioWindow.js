@@ -19,12 +19,12 @@ export function criarTelaCadastroFuncionario() {
         resizable: false,
         autoHideMenuBar: true,
         webPreferences: {
-            preload: path.join(__dirname, '../../router/cadastro/cadastroFuncionario.js'),
+            preload: path.join(__dirname, '..', '..', 'router', 'cadastro', 'cadastroFuncionario.js'),
             contextIsolation: true,
             nodeIntegration: false
         }
     });
 
-    win.loadFile('./src/views/admin/cadastroFuncionario.html');
+     win.loadFile(path.join(__dirname, '..', '..', 'views', 'cadastro', 'cadastroFuncionario.html')); 
     return win;
 }

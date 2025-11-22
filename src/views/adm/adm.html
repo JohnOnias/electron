@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tela de Inicio - Administrador</title>
-     <link rel="stylesheet" href="style/admin.css">
+     <link rel="stylesheet" href="style/adm.css">
 </head>
 <body>
   <div class="container">
@@ -16,8 +16,8 @@
       </div>
       <nav>
         <ul>
-          <li class="menu"><a href="#" onclick="mostrarTela('Inicial')">Tela Inicial</a></li>
-          <li class="menu"><a href="#" onclick="mostrarTela('Cadastros')">Cadastro</a></li>
+          <li class="menu"><a href="#" id="btnInicial" onclick="showScreens('Inicial')">Tela Inicial</a></li>
+          <li class="menu"><a href="#" id="btnCadastros" onclick="showScreens('Cadastros')">Cadastro</a></li>
         </ul>
       </nav>
     </aside>
@@ -61,6 +61,7 @@
 
 
 
-    <script src="js/admin.js"></script>
+    <script src="js/admView.js"></script>
+    <script src="../utils/showScreens.js"></script>
 </body>
 </html>

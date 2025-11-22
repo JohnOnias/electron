@@ -1,13 +1,13 @@
 import { ipcMain } from 'electron';
-import { criarTelaGerente } from '../../screens/gerente/gerenteWindow.js';
+import { criarTelaGarcom } from '../../screens/garcom/garcomWindow.js';
 import { getLoginWindow } from '../../screens/login/loginWindow.js';
 
 const loginWindow = getLoginWindow();
 
-export function gerenteController() {
-    ipcMain.handle('abrirTelaGerente', async () => {
+export function garcomController() {
+    ipcMain.handle('abrirTelaGarcom', async () => {
         try {
-            await criarTelaGerente();
+            await criarTelaGarcom();
 
             if (loginWindow && !loginWindow.isDestroyed()) loginWindow.close();
 
@@ -16,4 +16,6 @@ export function gerenteController() {
             return { success: false, error: error.message };
         }
     });
+
+
 }

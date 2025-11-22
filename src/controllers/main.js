@@ -10,13 +10,18 @@ import { app, BrowserWindow} from "electron";
 // home
 import { criarLoginWindow } from '../screens/login/loginWindow.js';
 import { criarTelaGerente } from "../screens/gerente/gerenteWindow.js";
+import { admWindow } from "../screens/adm/admWindow.js";
+import { criarTelaGarcom } from "../screens/garcom/garcomWindow.js";
 
 // ============================================================
 // Inicialização do App
 // ============================================================
 app.whenReady().then(() => {
-  //criarLoginWindow();
-  criarTelaGerente();
+  criarLoginWindow();
+  //criarTelaGerente();
+  
+  admWindow(); 
+  //criarTelaGarcom(); 
 
 // ============================================================
 // chamar os controllers
@@ -30,6 +35,7 @@ app.whenReady().then(() => {
   userController();
   gerenteController();
   admController();
+  garcomController(); 
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -53,8 +59,10 @@ import { funcionarioController } from './cadastro/funcionarioController.js';
 import { mesaController } from './cadastro/mesaController.js';
 import { resetController } from './reset/resetController.js';
 import { userController } from './user/userController.js';  
-import { gerenteController } from './gerente/gerenteController.js';
-import { admController } from './adm/admController.js';
+import { gerenteController } from './funcionario/gerenteController.js';
+import {admController} from './adm/admController.js';
+import { garcomController } from "./funcionario/garcomController.js";
+
 
 
 

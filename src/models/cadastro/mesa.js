@@ -1,7 +1,6 @@
 
 import {conn } from '../../database/db/conn.js';
 
-
 export async function cadastrarMesa(numero_mesa, status, n_cadeiras) {
   const db = await conn();
   try {
@@ -10,7 +9,7 @@ export async function cadastrarMesa(numero_mesa, status, n_cadeiras) {
       throw new Error("Número da mesa é obrigatório.");
     }
 
-    const existingMesa = await verificarMesa(db, numero_mesa);
+    const existingMesa = await verificarMesa(numero_mesa);
     if (existingMesa.length > 0) {
       throw new Error("Mesa já cadastrada.");
     }
@@ -45,3 +44,18 @@ export async function getMesas(){
       else resolve(rows); 
     });
   })};
+
+export async function verificarMesa(numero_mesa) {
+  const db = await conn();
+  return new Promise((resolve, reject) => {
+    const query = `SELECT * FROM tb_Mesas WHERE numero = ?`;
+    db.all(query, [numero_mesa], (err, row) => {
+      if (err) {
+        console.error("Erro ao verificar mesa:", err);
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    });
+  });
+}

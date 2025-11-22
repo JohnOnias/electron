@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tela de Inicio - Gerente</title>
-   <link rel="stylesheet" href="style/gerente.css">
+    <title>Tela de Inicio - Garçom</title>
+   <link rel="stylesheet" href="style/garcom.css">
 </head>
 <body>
   <div class="container">
@@ -13,13 +13,12 @@
     <aside class="sidebar">
       <div class="perfil">
         <div class="icone"></div>
-        <p>Gerente<br><strong id="nomeFuncionario"></strong></p>
+        <p>Garçom<br><strong id="nomeFuncionario"></strong></p>
       </div>
       <nav>
         <ul>
           <li class="menu"> <img src="../../img/menu/pedidos.png" alt="icone pedidos"> <a href="#" id="btnMesas" onclick="showScreens('Mesas')">Mesas e Pedidos</a></li>
           <li class="menu"> <img src="../../img/menu/produtos.png" alt="icone produtos"> <a href="#" id="btnCategorias" onclick="showScreens('Categorias')">Produtos e Categorias</a></li>
-          <li class="menu"> <img src="../../img/menu/cadastros.png" alt="icone cadastros"> <a href="#" id="btnCadastros" onclick="showScreens('Cadastros')">Cadastro</a></li>
         </ul>
       </nav>
     </aside>
@@ -71,38 +70,11 @@
 
                  </div>
           </div>
-          <!-- ######################## TELA CADASTRO #################################-->
+       
 
-         <div id="telaCadastros" class="tela" style="display:none;">
-            <h1>Cadastro</h1>
-            <div class="containerConteudo">
-                <p>Crie uma nova Categoria de Produtos</p>
-                
-                <div class="divbnt">
-                <button class="bntPadrao" id="btnCadastrarCategoria">Criar Nova Categoria</button>   
-                <a href="#">Editar Categorias</a>
-                </div>
-                <hr>
-            </div>
 
-            <div class="containerConteudo">
-                <p>Crie um novo Produto</p>
-                
-                <div class="divbnt">
-                <button class="bntPadrao" id="bntCadastrarProduto">Criar Produtos</button>   
-                <a href="#">Editar Produtos</a>
-                </div>
-                <hr>
-            </div>
-            <div class="containerConteudo">
-                <p>Adcione uma nova mesa para gerenciar pedidos</p>
-                
-                <div class="divbnt">
-                <button class="bntPadrao" id="btnAdicionarMesa">Adicionar Mesa</button>   
-                <a href="#"> Editar Mesas</a>
-                </div>
-                <hr>
-            </div>
+        
+         
          </div>
 
 

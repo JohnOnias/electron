@@ -1,8 +1,10 @@
 import bcrypt from 'bcrypt';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import {conn } from '../../database/db/conn.js';
+import {verificarCpf} from '../utils/cpf.js';
+import { verificarEmailCadastrado } from '../utils/email.js';
+import { verificarGerente } from '../utils/gerente.js';
 
+let saltRounds = 16; 
 
 
 export async function cadastrarFuncionario(nome, cpf, email, senha, tipoFuncionario) {
@@ -23,7 +25,7 @@ export async function cadastrarFuncionario(nome, cpf, email, senha, tipoFunciona
       }
     }
     if(email){
-      const existingEmail = await verificarEmail(email);
+      const existingEmail = await verificarEmailCadastrado(email);
       if(existingEmail.length > 0){
         throw new Error("E-mail já cadastrado.");
       }

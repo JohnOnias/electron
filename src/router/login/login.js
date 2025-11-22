@@ -18,5 +18,11 @@ contextBridge.exposeInMainWorld("api", {
     abrirTelaDeVerificacaoToken: () => ipcRenderer.invoke("abrirTelaDeVerificacaoToken"),
 
 
+    // users 
+    abrirTelaAdm: () => ipcRenderer.invoke("abrirTelaAdm"),
+    abrirTelaGerente: () => ipcRenderer.invoke("abrirTelaGerente"), 
+    abrirTelaGarcom: () => ipcRenderer.invoke("abrirTelaGarcom")
+
+
 
 });
