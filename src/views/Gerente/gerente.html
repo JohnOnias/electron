@@ -17,22 +17,40 @@
       </div>
       <nav>
         <ul>
-          <li class="menu"> <img src="../../img/menu/pedidos.png" alt="icone pedidos"> <a href="#" id="btnMesas" onclick="showScreens('Mesas')">Mesas e Pedidos</a></li>
-          <li class="menu"> <img src="../../img/menu/produtos.png" alt="icone produtos"> <a href="#" id="btnCategorias" onclick="showScreens('Categorias')">Produtos e Categorias</a></li>
-          <li class="menu"> <img src="../../img/menu/cadastros.png" alt="icone cadastros"> <a href="#" id="btnCadastros" onclick="showScreens('Cadastros')">Cadastro</a></li>
+          <li class="menu"> <img src="../../img/menu/pedidos.png" alt="icone pedidos"> <a href="#" id="btnMesas" >Mesas</a></li>
+          <li class="menu"> <img src="../../img/menu/produtos.png" alt="icone produtos"> <a href="#" id="btnCategorias" >Produtos e Categorias</a></li>
+          <li class="menu"> <img src="../../img/menu/cadastro.png" alt="icone cadastros"> <a href="#" id="btnCadastros">Cadastro</a></li>
+         <!-- <li class="menu"> <img src="../../img/menu/pedido.png" alt="icone pedidos"> <a href="#" id="btnPedidos"> Abrir Pedido</a></li> -->
         </ul>
       </nav>
     </aside>
 
     <!-- Conteúdo principal -->
-    <main class="conteudo">
+<main class="conteudo">
        
 
  <!-- ######################## TELA MESAS #################################-->
 
          <div id="telaMesas" class="tela" style="display: none;">
-            <h1>Mesas</h1>
-            <p class="subtitulo">Clique nas mesas para visualizar os pedidos</p>
+          
+          <div id="topMesas">
+             <div id="primeiro-item">
+               <h1>Mesas</h1>
+                <p class="subtitulo">Clique nas mesas para visualizar os pedidos</p>
+             </div>
+             
+             <div id="segundo-item">
+
+              <button class="bntPadraoGreen" id="bntAbrirPedido"> Abrir Pedido</button>
+
+             </div>
+              <br>
+              <hr>
+              <br>
+            
+          </div>
+   
+            
             <div class="mesas-container" id="mesas-container">
 
 
@@ -104,12 +122,36 @@
                 <hr>
             </div>
          </div>
+   <!-- ######################## TELA ABRIR PEDIDO #################################
+  <div id="telaPedidos" class="tela" style="display:none;">
 
 
-         
+      <div id="abrirPedido">
+  
+           <button class="bntPadraoGreen" id="bntAbrirPedido"> Abrir Pedido</button>
 
-    </main>
-  </div>
+      </div>
+
+      <div id="pedidoAberto">
+            <form action="#">
+              <label for="mesa">Mesa:</label>
+              <input type="number" name="mesa" id="mesa">
+              <button class="" id="confirmar">Confirmar</button>
+            </form>
+            <button class="" id="cancelar">Cancelar</button>
+      </div>
+
+
+          
+  </div>-->
+
+
+
+
+</main>
+
+
+</div>
 
   <script src="../utils/showProducts.js"></script>
   <script src="../utils/showScreens.js"></script>

@@ -17,10 +17,10 @@ import { criarTelaGarcom } from "../screens/garcom/garcomWindow.js";
 // Inicialização do App
 // ============================================================
 app.whenReady().then(() => {
-  criarLoginWindow();
-  //criarTelaGerente();
+  //criarLoginWindow();
+  criarTelaGerente();
   
-  admWindow(); 
+  //admWindow(); 
   //criarTelaGarcom(); 
 
 // ============================================================
@@ -36,6 +36,7 @@ app.whenReady().then(() => {
   gerenteController();
   admController();
   garcomController(); 
+  pedidoController(); 
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
@@ -62,7 +63,7 @@ import { userController } from './user/userController.js';
 import { gerenteController } from './funcionario/gerenteController.js';
 import {admController} from './adm/admController.js';
 import { garcomController } from "./funcionario/garcomController.js";
-
+import { pedidoController } from "./pedido/pedidoController.js";
 
 
 

@@ -26,9 +26,13 @@ window.showScreens = async function (id) {
                 `;
 
                 // visualizarPedidos não está implementado; log para evitar erro
-                card.onclick = () => {
-                    if (window.visualizarPedidos) return window.visualizarPedidos(m.numero);
-                    console.log('Mesa clicada:', m.numero);
+                card.onclick = async () => {
+                    if(m.status === 'Disponivel'){
+                         await window.api.abrirTelaPedido();
+                    }
+                    else if(m.status ===! 'Disponivel' ){
+                        //await window.api.abrirPedidosFeitos();
+                    }
                 };
 
                 container.appendChild(card);
