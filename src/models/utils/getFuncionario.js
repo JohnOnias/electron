@@ -11,14 +11,14 @@ const __dirname = dirname(__filename);
 
 
 
-export async function verificarGerente(tipoFuncionario) {
+export async function verificarFuncionario(tipoFuncionario) {
   const db = await conn();
   return new Promise((resolve, reject) => {
     const query = `SELECT id, nome FROM tb_Funcionarios WHERE tipo = ?`
     db.all(query, [tipoFuncionario], (err, rows) => {
       db.close();
       if (err) {
-        console.error("Erro ao pesquisar gerente", err);
+        console.error("Erro ao pesquisar " + tipoFuncionario , err);
         reject(err);
         return;
       }
