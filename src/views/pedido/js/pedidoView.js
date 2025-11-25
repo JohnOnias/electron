@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 try {
-    const garcons = window.api.getGarcom();
+    const garcons = window.api.getFuncionario('garcom');
     if (Array.isArray(garcons)) {
       garcons.forEach(g => {
         const option = document.createElement("option");

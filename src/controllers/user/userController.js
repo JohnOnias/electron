@@ -10,5 +10,5 @@ export function userController() {
     });
 
     ipcMain.handle("get-current-user", async () => currentUser);
-
+    
 };

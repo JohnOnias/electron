@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron';
 import { criarTelaPedido } from '../../screens/pedido/pedidoWindow.js';
+import { getFuncionario } from '../../models/utils/getFuncionario.js';
 
 
 export function pedidoController() {
@@ -11,6 +12,10 @@ export function pedidoController() {
         } catch (error) {
             return { success: false, error: error.message };
         }
+    });
+
+    ipcMain.handle('getFuncionario', async(tipoFuncionario) => {
+        return getFuncionario(tipoFuncionario); 
     });
 
 

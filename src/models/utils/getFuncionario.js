@@ -1,5 +1,3 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from 'electron';
-import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import {conn } from '../../database/db/conn.js';
@@ -11,7 +9,7 @@ const __dirname = dirname(__filename);
 
 
 
-export async function verificarFuncionario(tipoFuncionario) {
+export async function getFuncionario(tipoFuncionario) {
   const db = await conn();
   return new Promise((resolve, reject) => {
     const query = `SELECT id, nome FROM tb_Funcionarios WHERE tipo = ?`

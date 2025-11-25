@@ -13,11 +13,15 @@ export async function cadastrarCategoria(nomeCategoria, status) {
         });
         
 }
+
  export async function getCategoria(){ 
-  const db = await conn(); 
-  return new Promise((resolve, reject) => {
-    db.all("SELECT id, nome, status FROM tb_Categorias", [], (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows);
-    });
+
+    const db = await conn(); 
+    return new Promise((resolve, reject) => {
+      db.all("SELECT id, nome, status FROM tb_Categorias", [], (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+      
   })};
+

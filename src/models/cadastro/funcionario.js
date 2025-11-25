@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import {conn } from '../../database/db/conn.js';
 import {verificarCpf} from '../utils/cpf.js';
 import { verificarEmailCadastrado } from '../utils/email.js';
-import { verificarFuncionario } from '../utils/gerente.js';
+import { getFuncionario } from '../utils/getFuncionario.js';
 
 let saltRounds = 16; 
 
@@ -12,7 +12,7 @@ export async function cadastrarFuncionario(nome, cpf, email, senha, tipoFunciona
 
   try{
     if (tipoFuncionario === "gerente") {
-        const existirGerente = await verificarFuncionario(tipoFuncionario);
+        const existirGerente = await getFuncionario(tipoFuncionario);
          if (existirGerente.length > 0) {
             throw new Error("Já existe um gerente cadastrado.");
       }

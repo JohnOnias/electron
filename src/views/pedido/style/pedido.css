@@ -11,6 +11,12 @@ html{
  
 
 }
+select{
+    width: 100px;
+    height: 30px;
+    margin-bottom: 30px;
+
+}
 .bntPadrao {
     padding: 10px 20px;
     background-color: #333;
