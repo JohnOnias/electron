@@ -1,54 +1,37 @@
-import { Pedidos } from "../../utils/PedidosClass";     
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {  // <-- async aqui
     const bntAbrirPedido = document.getElementById('confirmar'); 
     const bntCancelar = document.getElementById('cancelar');
-    const bntSelectGarcom = document.getElementById('ListGarcom');
-    const inputMesaNumero = document.getElementById('mesa');
-    const select = document.getElementById('ListGarcom');
+    const select = document.getElementById('ListaGarcom');
+    const tipoFuncionario = "garcom"; 
 
+   try {
+        
+        const garcons = await window.api.getFuncionario(tipoFuncionario);
+        await window.api.getFuncionario("garcom").then(console.log)
+        console.log("printando array:"); 
+        console.log(garcons); 
 
-try {
-    const garcons = window.api.getFuncionario('garcom');
-    if (Array.isArray(garcons)) {
-      garcons.forEach(g => {
-        const option = document.createElement("option");
-        option.value = g.id;
-        option.textContent = g.nome;
-        select.appendChild(option);
-      });
+        if (Array.isArray(garcons) && garcons.length > 0) {
+            garcons.forEach(g => {
+                const option = document.createElement("option");
+                option.value = g.id;
+                option.textContent = g.nome;
+                select.appendChild(option);
+            });
+        }
+    } catch(err){
+        console.log('Não foi possível listar os Garçons', err);
     }
-}
-catch(err){
-
-}
-
-
-
-
-
 
     if(bntAbrirPedido){
-        bntAbrirPedido.addEventListener('click', () =>{
-               try {
-
+        bntAbrirPedido.addEventListener('click', () => {
+            try {
+                // Aqui você pode abrir o pedido usando Pedidos class
+            } catch(err){
+                alert("Erro: " + err); 
             }
-        
-               catch(err){
-                alert("Erro: ", err); 
-               }
         });
-     
-
     }
 
-
-
-
-
-
-}) 
-
-
-
-
+});

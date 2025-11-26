@@ -28,7 +28,7 @@ window.showScreens = async function (id) {
                 // visualizarPedidos não está implementado; log para evitar erro
                 card.onclick = async () => {
                     if(m.status === 'Disponivel'){
-                         await window.api.abrirTelaPedido();
+                         await window.api.abrirTelaPedido(m.id);
                     }
                     else if(m.status ===! 'Disponivel' ){
                         //await window.api.abrirPedidosFeitos();

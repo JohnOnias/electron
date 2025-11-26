@@ -20,6 +20,7 @@ app.whenReady().then(() => {
   //criarLoginWindow();
   criarTelaGerente();
   
+  
   //admWindow(); 
   //criarTelaGarcom(); 
 

@@ -26,19 +26,5 @@ document.addEventListener('DOMContentLoaded', () => {
     if(bntAbrirPedido) bntAbrirPedido.addEventListener('click', async () => { try{ await window.api.abrirTelaPedido();} catch(err) {console.error(err)}})
     
     // tentar obter o usuário atual via IPC e mostrar tela inicial
-    (async () => {
-        try {
-            const usuario = await window.api.getCurrentUser();
-            const el = document.getElementById('nomeFuncionario');
-            if (el) el.innerText = (usuario && usuario.nome) ? usuario.nome : 'Nome não disponível';
-        } catch (err) {
-            console.warn('Erro ao obter usuário atual:', err);
-            const el = document.getElementById('nomeFuncionario');
-            if (el) el.innerText = 'Nome não disponível';
-        }
-
-        if (window.showScreens) {
-            try { window.showScreens('Mesas'); } catch (err) { console.error('Erro em showScreens:', err); }
-        }
-    })();
+ 
 });

@@ -16,8 +16,8 @@ export function criarTelaPedido() {
     const win = new BrowserWindow({
         width: 350,
         height: 550,
-        resizable: false,
-        autoHideMenuBar: true,
+        resizable: true,
+        autoHideMenuBar: false,
         webPreferences: {
             preload: path.join(__dirname, '..', '..', 'router', 'pedido', 'pedido.js'),
             contextIsolation: true,
