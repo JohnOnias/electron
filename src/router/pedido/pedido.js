@@ -3,7 +3,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 try {
     const api = {
-            registrarPedido: () => ipcRenderer.invoke('registrarPedido' ),
+            registrarPedido: (numeroMesa) => ipcRenderer.invoke('registrarPedido', numeroMesa ),
             getMesas: () => ipcRenderer.invoke('get-mesas'),
             getFuncionario: (tipoFuncionario) => ipcRenderer.invoke('getFuncionario', tipoFuncionario),
             getCurrentUser: () => ipcRenderer.invoke('get-current-user'),

@@ -22,23 +22,24 @@ document.addEventListener("mesa-clicada", (e) => {
 document.addEventListener('DOMContentLoaded', async () => {
 
     labelMesa = document.getElementById("labelMesa");
-    mesa = document.getElementById('mesa'); 
+    mesa = document.getElementById("mesa"); 
     form = document.getElementById("formID");
-    const bntAbrirPedido = document.getElementById('confirmar'); 
-    const bntCancelar = document.getElementById('cancelar');
-    const select = document.getElementById('ListaGarcom');
+    const bntAbrirPedido = document.getElementById("confirmar"); 
+    const bntCancelar = document.getElementById("cancelar");
+    const select = document.getElementById("ListaGarcom");
     const tipoFuncionario = "garcom"; 
 
-  
-
-    const mesa = document.getElementById("mesa");
-
-    mesa.addEventListener("input", () => {
-        if (mesa.value < 1) {
-            mesa.value = 1;
+document.addEventListener("input", async(e) => {
+    if(mesa){
+        if(mesa.value <= 0){
+            e.preventDefault(); 
+            alert("apenar numeros maiores que 0!");
+            console.log("entrei na verificação maior que 0!"); 
         }
-    });
-    
+    }
+});
+
+
    try {
         
         const garcons = await window.api.getFuncionario(tipoFuncionario);
@@ -57,15 +58,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch(err){
         console.log('Não foi possível listar os Garçons', err);
     }
-
-    if(bntAbrirPedido){
-        bntAbrirPedido.addEventListener('click', () => {
-            try {
-               
-            } catch(err){
-                alert("Erro: " + err); 
+if (bntAbrirPedido) {
+    bntAbrirPedido.addEventListener('click', async (e) => {
+        try {
+            e.preventDefault();
+            const numeroMesa = mesa.value;
+            
+            if (!numeroMesa) {
+                alert("Por favor, informe o número da mesa.");
+                return;
             }
-        });
-    }
+
+            // Call the API to register the order
+            await window.api.registrarPedido(numeroMesa);
+            console.log(`Pedido registrado para a mesa: ${numeroMesa}`);
+            console.log("Cliquei em confirmar pedido");
+            
+        } catch (err) {
+            console.error("Erro ao registrar o pedido:", err);
+            alert("Erro: " + err.message || err);
+        }
+    });
+}
 
 });

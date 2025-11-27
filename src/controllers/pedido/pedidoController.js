@@ -1,6 +1,7 @@
 import { ipcMain } from 'electron';
 import { criarTelaPedido } from '../../screens/pedido/pedidoWindow.js';
 import { getFuncionario } from '../../models/utils/getFuncionario.js';
+import { registrarPedido} from '../../models/utils/registrarPedido.js'; 
 
 export function pedidoController() {
     ipcMain.handle('abrirTelaPedido', async () => {
@@ -14,5 +15,8 @@ export function pedidoController() {
 
     ipcMain.handle('getFuncionario', async (event, tipoFuncionario) => {
         return getFuncionario(tipoFuncionario);
+    });
+    ipcMain.handle('registrarPedido', (numeroMesa) => {
+        return registrarPedido(numeroMesa); 
     });
 }

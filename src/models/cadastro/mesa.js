@@ -46,6 +46,7 @@ export async function getMesas(){
   })};
 
 export async function verificarMesa(numero_mesa) {
+  console.log("entrei no verificar mesa!"); 
   const db = await conn();
   return new Promise((resolve, reject) => {
     const query = `SELECT * FROM tb_Mesas WHERE numero = ?`;
