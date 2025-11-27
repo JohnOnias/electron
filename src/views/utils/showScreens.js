@@ -1,12 +1,10 @@
 window.showScreens = async function (id) {
     document.querySelectorAll(".tela").forEach(tela => tela.style.display = "none");
-   
-
+    
     const tela = document.getElementById("tela" + id);
     if (!tela) return;
     tela.style.display = "block";
 
-    // printar as mesas na tela de mesas
     try {
         const mesas = (window.api && window.api.getMesas) ? await window.api.getMesas() : [];
         const container = document.getElementById('mesas-container');
@@ -23,19 +21,31 @@ window.showScreens = async function (id) {
                     <span class="status-badge ${m.status === "Disponivel" ? "disponivel" : "ocupada"}">
                         ${m.status}
                     </span>
-                `;
+                `; 
 
-                // visualizarPedidos não está implementado; log para evitar erro
-                card.onclick = async () => {
-                    if(m.status === 'Disponivel'){
-                         await window.api.abrirTelaPedido(m.id);
-                    }
-                    else if(m.status ===! 'Disponivel' ){
-                        //await window.api.abrirPedidosFeitos();
-                    }
-                };
+               card.addEventListener("click", async () => {
+                    if (m.status === 'Disponivel') {
+                        console.log("evento disparado enviado");
 
-                container.appendChild(card);
+                        const dados = {
+                            numero: m.numero,
+                            status: m.status
+                        };
+
+                        const evento = new CustomEvent("mesa-clicada", {
+                            detail: dados,
+                            bubbles: true
+                        });
+
+                        window.dispatchEvent(evento);
+                        console.log(evento); 
+                        
+                       
+                    }
+            });
+            container.appendChild(card);
+
+                
             });
         }
     } catch (err) {

@@ -35,3 +35,7 @@ try {
         setCurrentUser: (usuario) => ipcRenderer.invoke('set-current-user', usuario)
     });
 }
+window.addEventListener("mesa-clicada", (e) => {
+    console.log("EVENTO RECEBIDO NO PRELOAD:", e.detail);
+    window.api.abrirTelaPedido();
+});
