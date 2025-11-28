@@ -52,6 +52,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (resposta.success) {
                     alert("Pedido registrado com sucesso!");
                     form.reset();
+                    
+                    // Abrir a tela de seleção de produtos
+                    await window.api.abrirTelaSelecaoProdutos();
+                    
+                    // Fechar a tela de pedido após abrir a tela de seleção
+                    await window.api.fecharTelaPedido();
                 } else {
                     alert("Erro ao registrar pedido: " + resposta.error);
                 }
@@ -68,3 +74,4 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 }
 });
+

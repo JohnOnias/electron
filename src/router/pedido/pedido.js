@@ -10,8 +10,14 @@ try {
             abrirTelaPedido: () => ipcRenderer.invoke('abrirTelaPedido'),
             setCurrentUser: (usuario) => ipcRenderer.invoke('set-current-user', usuario),
             mudarStatus: (numeroMesa) => ipcRenderer.invoke('mudar-status-mesa',event, numeroMesa),
-            fecharTelaPedido: () => ipcRenderer.invoke("fecharTelaPedido")
-
+            fecharTelaPedido: () => ipcRenderer.invoke("fecharTelaPedido"),
+            abrirTelaSelecaoProdutos: () => ipcRenderer.invoke('abrirTelaSelecaoProdutos'),
+            fecharTelaSelecaoProdutos: () => ipcRenderer.invoke('fecharTelaSelecaoProdutos'),
+            getDadosPedidoAtual: () => ipcRenderer.invoke('getDadosPedidoAtual'),
+            getTodasCategorias: () => ipcRenderer.invoke('getTodasCategorias'),
+            getProdutosCategoria: (categoriaId) => ipcRenderer.invoke('getProdutosCategoria', categoriaId),
+            getTodosProdutos: () => ipcRenderer.invoke('getTodosProdutos'),
+            adicionarProdutosPedido: (pedido) => ipcRenderer.invoke('adicionarProdutosPedido', pedido)
     }
 
      contextBridge.exposeInMainWorld('api', api);
