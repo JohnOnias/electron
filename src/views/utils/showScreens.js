@@ -7,6 +7,7 @@ window.showScreens = async function (id) {
 
     try {
         const mesas = (window.api && window.api.getMesas) ? await window.api.getMesas() : [];
+        
         const container = document.getElementById('mesas-container');
         if (container) {
             container.innerHTML = "";

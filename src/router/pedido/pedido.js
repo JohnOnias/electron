@@ -3,12 +3,14 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 try {
     const api = {
-            registrarPedido: (numeroMesa) => ipcRenderer.invoke('registrarPedido', numeroMesa ),
+            registrarPedido: (numeroMesa, idGarcom) => ipcRenderer.invoke('registrarPedido', numeroMesa, idGarcom ),
             getMesas: () => ipcRenderer.invoke('get-mesas'),
             getFuncionario: (tipoFuncionario) => ipcRenderer.invoke('getFuncionario', tipoFuncionario),
             getCurrentUser: () => ipcRenderer.invoke('get-current-user'),
             abrirTelaPedido: () => ipcRenderer.invoke('abrirTelaPedido'),
-            setCurrentUser: (usuario) => ipcRenderer.invoke('set-current-user', usuario)
+            setCurrentUser: (usuario) => ipcRenderer.invoke('set-current-user', usuario),
+            mudarStatus: (numeroMesa) => ipcRenderer.invoke('mudar-status-mesa',event, numeroMesa),
+            fecharTelaPedido: () => ipcRenderer.invoke("fecharTelaPedido")
 
     }
 

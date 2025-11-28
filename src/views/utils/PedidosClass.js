@@ -19,6 +19,6 @@ class Pedidos {
 }
 
 class CriarPedido {
-    constructor(mesa, data_hora)
+    //constructor(mesa, data_hora)
 }
 export { Pedidos}; 
