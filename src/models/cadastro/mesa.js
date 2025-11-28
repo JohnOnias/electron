@@ -46,6 +46,7 @@ export async function getMesas(){
   })};
 
 export async function verificarMesa(numero_mesa) {
+  console.log("entrei no verificar mesa!"); 
   const db = await conn();
   return new Promise((resolve, reject) => {
     const query = `SELECT * FROM tb_Mesas WHERE numero = ?`;
@@ -59,3 +60,51 @@ export async function verificarMesa(numero_mesa) {
     });
   });
 }
+
+
+
+console.log("entrei no models mesa!");
+
+
+
+export async function verificarMesaPedido(numero_mesa){
+  console.log("entrei no verificar mesa pedido!"); 
+  const db = await conn();
+  return new Promise((resolve, reject) => {
+    const query = `SELECT * FROM tb_Pedidos WHERE mesa_numero = ?`;
+    db.all(query, [numero_mesa], (err, row) => {
+      if (err) {
+        console.error("Erro ao verificar mesa:", err);
+        reject(err);
+      } else {
+        resolve(row);
+      }
+    });
+  });
+
+}
+
+export async function mudarStatus(numero_mesa){
+  const ocupado = "Ocupada";
+
+  console.log("entrei no mudar Status!"); 
+  const db =  await conn();
+
+  return new Promise((resolve, reject) => {
+    const query = `UPDATE tb_Mesas SET status = ? WHERE numero = ?`;
+
+    db.run(query, [ocupado, numero_mesa], function(err) {
+      if (err) {
+        console.error("Erro ao mudar status:", err);
+        reject(err);
+      } else {
+     
+        resolve({ success: true, changes: this.changes });
+      }
+
+      db.close();
+    });
+
+  });
+}
+

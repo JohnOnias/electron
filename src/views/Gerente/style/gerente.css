@@ -202,7 +202,37 @@ nav ul {
     margin-bottom: 20px;
     border-radius: 8px;
 }
+#topMesas{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100px;
+    width: 80vw;
 
+}
+#primeiro-item{
+    display: flex;
+    flex-direction: column;
+    height: 100px;
+    width: 40vw;
+    align-items: flex-start;
+    margin-left: -10px;
+   
+   
+}
+#segundo-item{
+    height: 100px;
+    width: 33vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+hr{
+        border: none; /* Remove default border */
+        height: 2px; /* Set thickness */
+        background-color: #333; /* Set color */
+}
 .containerConteudo p {
     margin-bottom: 15px;
     color: #666;
@@ -224,8 +254,22 @@ nav ul {
     font-size: 14px;
     transition: background-color 0.3s;
 }
-
+.bntPadraoGreen {
+    height: 45px;
+    width: 120px;
+    padding: 10px 20px;
+    background-color: #2F9E41;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
 .bntPadrao:hover {
+    background-color: #555;
+}
+.bntPadraoGreen:hover {
     background-color: #555;
 }
 

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abrir Pedido</title>
+  <link rel="stylesheet" href="style/pedido.css">
+</head>
+<body>
+
+<div id="container">
+    
+      <div id="pedidoAberto">
+            <form action="#" id="formID">
+              <label for="mesa" id="labelMesa">Mesa:</label>
+              <input type="number" name="mesa" id="mesa" required min="1" >
+              <label for="garcom">Garçom:</label>
+              <select name="garcom" id="ListaGarcom"></select>
+              <br>
+              <br>
+              <button class="bntPadraoGreen" id="confirmar">Confirmar</button>
+            </form>
+            <button class="bntPadrao" id="cancelar">Cancelar</button>
+      </div>
+    
+</div>
+
+ 
+  </div>
+  <script type="module" src="js/pedidoView.js"></script>
+  <script src="../utils/showScreens.js"></script>
+</body>
+</html>
