@@ -25,7 +25,6 @@ window.showScreens = async function (id) {
                 `; 
 
                card.addEventListener("click", async () => {
-                    if (m.status === 'Disponivel') {
                         console.log("evento disparado enviado");
 
                         const dados = {
@@ -40,9 +39,8 @@ window.showScreens = async function (id) {
 
                         window.dispatchEvent(evento);
                         console.log(evento); 
+                        console.log("click na mesa! " + m.numero);
                         
-                       
-                    }
             });
             container.appendChild(card);
 
