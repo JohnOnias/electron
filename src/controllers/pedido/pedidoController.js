@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import { criarTelaPedido, fecharTelaPedido, criarTelaSelecaoProdutos, fecharTelaSelecaoProdutos } from '../../screens/pedido/pedidoWindow.js';
+import { criarTelaPedido, fecharTelaPedido, criarTelaSelecaoProdutos, fecharTelaSelecaoProdutos, criarTelaEditarProdutos } from '../../screens/pedido/pedidoWindow.js';
 import { getFuncionario } from '../../models/utils/getFuncionario.js';
 import { registrarPedido} from '../../models/utils/registrarPedido.js'; 
 import { mudarStatus } from '../../models/cadastro/mesa.js';
@@ -57,6 +57,10 @@ export function pedidoController() {
             return { success: false, error: err.message };
         }
     });
+    ipcMain.handle("abrir-editar-produtos", async () =>{
+        criarTelaEditarProdutos(); 
+
+    })
 
     ipcMain.handle("fecharTelaPedido", async () => {
         fecharTelaPedido();

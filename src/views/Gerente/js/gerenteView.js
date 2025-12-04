@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
    
     window.addEventListener("mesa-clicada", (e) => {
       console.log("EVENTO RECEBIDO NO PRELOAD:", e.detail);
-      window.api.abrirTelaSelecaoProdutos();
+      window.api.abrirTelaEditarProdutos();
       
 
       //window.api.abrirTelaPedido();

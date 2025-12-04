@@ -17,7 +17,9 @@ try {
             getTodasCategorias: () => ipcRenderer.invoke('getTodasCategorias'),
             getProdutosCategoria: (categoriaId) => ipcRenderer.invoke('getProdutosCategoria', categoriaId),
             getTodosProdutos: () => ipcRenderer.invoke('getTodosProdutos'),
-            adicionarProdutosPedido: (pedido) => ipcRenderer.invoke('adicionarProdutosPedido', pedido)
+            adicionarProdutosPedido: (pedido) => ipcRenderer.invoke('adicionarProdutosPedido', pedido),
+            editarProdutos: () => ipcRenderer.invoke("abrir-editar-produtos"),
+            getPedido: () => ipcRenderer.invoke("get-pedido")
     }
 
      contextBridge.exposeInMainWorld('api', api);

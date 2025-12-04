@@ -32,6 +32,7 @@ window.showScreens = async function (id) {
                        }
 
                     else{
+                        window.api.getPedido(m.numero); 
                         const dados = {
                           numero: m.numero,
                           status: m.status,

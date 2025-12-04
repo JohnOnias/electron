@@ -64,3 +64,21 @@ export function fecharTelaSelecaoProdutos() {
         winSelecao = null;
     }
 }
+export function criarTelaEditarProdutos() {
+    nativeTheme.themeSource = 'dark';
+
+    winSelecao = new BrowserWindow({
+        width: 1200,
+        height: 700,
+        resizable: true,
+        autoHideMenuBar: false,
+        webPreferences: {
+            preload: path.join(__dirname, '..', '..', 'router', 'pedido', 'pedido.js'),
+            contextIsolation: true,
+            nodeIntegration: false
+        }
+    });
+
+    winSelecao.loadFile(path.join(__dirname, '..', '..', 'views', 'pedido', 'editarProdutos.html'));
+    return winSelecao;
+}
