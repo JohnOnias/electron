@@ -24,7 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
         try { await window.api.abrirCadastroProduto(); } catch (err) { console.error(err); }
     });
     if(bntAbrirPedido) bntAbrirPedido.addEventListener('click', async () => { try{ await window.api.abrirTelaPedido();} catch(err) {console.error(err)}})
-    
+   
+   
+    window.addEventListener("mesa-clicada", (e) => {
+      console.log("EVENTO RECEBIDO NO PRELOAD:", e.detail);
+      window.api.abrirTelaSelecaoProdutos();
+      
+
+      //window.api.abrirTelaPedido();
+    });
     // tentar obter o usuário atual via IPC e mostrar tela inicial
  
 });

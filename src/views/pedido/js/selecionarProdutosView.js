@@ -15,7 +15,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             pedido.numeroMesa = dadosPedido.numeroMesa;
             pedido.idGarcom = dadosPedido.idGarcom;
         }
-
+        else{
+            
+        }
+        console.log(dadosPedido);
         // Carregar categorias
         await carregarCategorias();
 

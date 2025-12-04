@@ -4,25 +4,36 @@ console.log('[preload-gerente] iniciando...');
 
 try {
     const api = {
-        // Categoria API
-        getCategorias: () => ipcRenderer.invoke('get-categorias'),
-        cadastrarCategoria: (nomeCategoria, status) => ipcRenderer.invoke('cadastrar-categoria', nomeCategoria, status),
-        abrirCadastroCategoria: () => ipcRenderer.invoke('abrirCadastroCategoria'),
+      // Categoria API
+      getCategorias: () => ipcRenderer.invoke("get-categorias"),
+      cadastrarCategoria: (nomeCategoria, status) =>
+        ipcRenderer.invoke("cadastrar-categoria", nomeCategoria, status),
+      abrirCadastroCategoria: () =>
+        ipcRenderer.invoke("abrirCadastroCategoria"),
 
-        // Mesa API
-        getMesas: () => ipcRenderer.invoke('get-mesas'),
-        cadastrarMesa: (numero_mesa, status, n_cadeiras) => ipcRenderer.invoke('cadastro-mesa', numero_mesa, status, n_cadeiras),
-        abrirCadastroMesa: () => ipcRenderer.invoke('abrirCadastroMesa'),
-        abrirTelaPedido: () => ipcRenderer.invoke('abrirTelaPedido'),
-        // Produto API
-        cadastrarProduto: (nome, preco, categoria, descricao) => ipcRenderer.invoke('cadastrarProduto', nome, preco, categoria, descricao),
-        abrirCadastroProduto: () => ipcRenderer.invoke('abrirCadastroProduto'),
-        getProdutosPorCategoria: (idCategoria) => ipcRenderer.invoke('get-produtos-por-categoria', idCategoria),
-
-        // User
-        getCurrentUser: () => ipcRenderer.invoke('get-current-user'),
-        setCurrentUser: (usuario) => ipcRenderer.invoke('set-current-user', usuario)
-        
+      // Mesa API
+      getMesas: () => ipcRenderer.invoke("get-mesas"),
+      cadastrarMesa: (numero_mesa, status, n_cadeiras) =>
+        ipcRenderer.invoke("cadastro-mesa", numero_mesa, status, n_cadeiras),
+      abrirCadastroMesa: () => ipcRenderer.invoke("abrirCadastroMesa"),
+      abrirTelaPedido: () => ipcRenderer.invoke("abrirTelaPedido"),
+      // Produto API
+      cadastrarProduto: (nome, preco, categoria, descricao) =>
+        ipcRenderer.invoke(
+          "cadastrarProduto",
+          nome,
+          preco,
+          categoria,
+          descricao
+        ),
+      abrirCadastroProduto: () => ipcRenderer.invoke("abrirCadastroProduto"),
+      getProdutosPorCategoria: (idCategoria) =>
+        ipcRenderer.invoke("get-produtos-por-categoria", idCategoria),
+      abrirTelaSelecaoProdutos: () => ipcRenderer.invoke("abrirTelaSelecaoProdutos"),
+      // User
+      getCurrentUser: () => ipcRenderer.invoke("get-current-user"),
+      setCurrentUser: (usuario) =>
+        ipcRenderer.invoke("set-current-user", usuario),
     };
 
     contextBridge.exposeInMainWorld('api', api);
@@ -35,7 +46,3 @@ try {
         setCurrentUser: (usuario) => ipcRenderer.invoke('set-current-user', usuario)
     });
 }
-window.addEventListener("mesa-clicada", (e) => {
-    console.log("EVENTO RECEBIDO NO PRELOAD:", e.detail);
-    window.api.abrirTelaPedido();
-});

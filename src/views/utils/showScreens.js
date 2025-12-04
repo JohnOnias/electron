@@ -27,19 +27,27 @@ window.showScreens = async function (id) {
                card.addEventListener("click", async () => {
                         console.log("evento disparado enviado");
 
+                    if(m.status === "Disponivel"){
+                       window.api.abrirTelaPedido();
+                       }
+
+                    else{
                         const dados = {
-                            numero: m.numero,
-                            status: m.status
+                          numero: m.numero,
+                          status: m.status,
                         };
 
                         const evento = new CustomEvent("mesa-clicada", {
-                            detail: dados,
-                            bubbles: true
+                          detail: dados,
+                          bubbles: true,
                         });
 
                         window.dispatchEvent(evento);
-                        console.log(evento); 
+                        console.log(evento);
                         console.log("click na mesa! " + m.numero);
+                    }
+                        
+                       
                         
             });
             container.appendChild(card);
