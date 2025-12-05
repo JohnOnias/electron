@@ -18,6 +18,7 @@
       <nav>
         <ul>
           <li class="menu"> <img src="../../img/menu/pedidos.png" alt="icone pedidos"> <a href="#" id="btnMesas" >Mesas</a></li>
+          <li class="menu"> <img src="../../img/menu/pedidos.png" alt="icone gerenciar pedidos"> <a href="#" id="btnGerenciarPedidos">Gerenciar Pedidos</a></li>
           <li class="menu"> <img src="../../img/menu/produtos.png" alt="icone produtos"> <a href="#" id="btnCategorias" >Produtos e Categorias</a></li>
           <li class="menu"> <img src="../../img/menu/cadastro.png" alt="icone cadastros"> <a href="#" id="btnCadastros">Cadastro</a></li>
          <!-- <li class="menu"> <img src="../../img/menu/pedido.png" alt="icone pedidos"> <a href="#" id="btnPedidos"> Abrir Pedido</a></li> -->
@@ -89,6 +90,7 @@
 
                  </div>
           </div>
+
           <!-- ######################## TELA CADASTRO #################################-->
 
          <div id="telaCadastros" class="tela" style="display:none;">
@@ -122,6 +124,7 @@
                 <hr>
             </div>
          </div>
+
    <!-- ######################## TELA ABRIR PEDIDO #################################
   <div id="telaPedidos" class="tela" style="display:none;">
 
@@ -145,6 +148,65 @@
           
   </div>-->
 
+<!-- ######################## TELA GERENCIAR PEDIDOS ############################# -->
+<div id="telaGerenciarPedidos" class="tela" style="display:none;">
+    <h1>Gerenciar Pedidos</h1>
+    <p class="subtitulo">Visualize, edite e feche pedidos do sistema</p>
+
+    <div class="pedidos-lista">
+        <table class="tabela-pedidos">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Mesa</th>
+                    <th>Status</th>
+                    <th>Garçom</th>
+                    <th>Data</th>
+                    <th>Total</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="listaPedidos">
+                <!-- Pedidos serão inseridos aqui dinamicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal para ver detalhes do pedido -->
+    <div id="modalDetalhesPedido" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="fecharModal()">&times;</span>
+            <h2>Detalhes do Pedido #<span id="pedidoIdModal"></span></h2>
+            <p><strong>Mesa:</strong> <span id="mesaModal"></span></p>
+            <p><strong>Status:</strong> <span id="statusModal"></span></p>
+            
+            <h3>Itens do Pedido:</h3>
+            <table class="tabela-itens">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Quantidade</th>
+                        <th>Preço Unit.</th>
+                        <th>Subtotal</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="listaItensPedido">
+                    <!-- Itens serão inseridos aqui -->
+                </tbody>
+            </table>
+            
+            <div class="total-pedido">
+                <h3>Total: R$ <span id="totalPedidoModal">0.00</span></h3>
+            </div>
+
+            <div class="acoes-modal">
+                <button class="bntPadraoGreen" id="btnFecharPedidoModal">Fechar Pedido</button>
+                <button class="bntPadrao" onclick="fecharModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -156,5 +218,6 @@
   <script src="../utils/showProducts.js"></script>
   <script src="../utils/showScreens.js"></script>
   <script src="js/gerenteView.js"></script>
+  <script src="js/gerenciarPedidos.js"></script>
 </body>
 </html>

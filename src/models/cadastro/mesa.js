@@ -1,10 +1,13 @@
+import { conn } from '../../database/db/conn.js';
 
-import {conn } from '../../database/db/conn.js';
+console.log("models/mesa carregado!");
 
+/* ============================================================
+    CADASTRAR MESA
+============================================================ */
 export async function cadastrarMesa(numero_mesa, status, n_cadeiras) {
   const db = await conn();
   try {
-
     if (!numero_mesa) {
       throw new Error("Número da mesa é obrigatório.");
     }
@@ -31,80 +34,96 @@ export async function cadastrarMesa(numero_mesa, status, n_cadeiras) {
     console.error(err.message);
     return { success: false, error: err.message };
   } finally {
-    db.close(); 
+    db.close();
   }
 }
 
-
-export async function getMesas(){
-    const db = await conn();
+/* ============================================================
+    LISTAR MESAS
+============================================================ */
+export async function getMesas() {
+  const db = await conn();
   return new Promise((resolve, reject) => {
-    db.all("SELECT id, numero, status, n_cadeiras FROM tb_Mesas order by numero", [], (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows); 
-    });
-  })};
+    db.all(
+      "SELECT id, numero, status, n_cadeiras FROM tb_Mesas ORDER BY numero",
+      [],
+      (err, rows) => {
+        db.close();
+        if (err) reject(err);
+        else resolve(rows);
+      }
+    );
+  });
+}
 
+/* ============================================================
+    VERIFICAR SE A MESA EXISTE
+============================================================ */
 export async function verificarMesa(numero_mesa) {
-  console.log("entrei no verificar mesa!"); 
+  console.log("verificarMesa()");
   const db = await conn();
   return new Promise((resolve, reject) => {
     const query = `SELECT * FROM tb_Mesas WHERE numero = ?`;
-    db.all(query, [numero_mesa], (err, row) => {
-      if (err) {
-        console.error("Erro ao verificar mesa:", err);
-        reject(err);
-      } else {
-        resolve(row);
-      }
+    db.all(query, [numero_mesa], (err, rows) => {
+      db.close();
+      if (err) reject(err);
+      else resolve(rows);
     });
   });
 }
 
-
-
-console.log("entrei no models mesa!");
-
-
-
-export async function verificarMesaPedido(numero_mesa){
-  console.log("entrei no verificar mesa pedido!"); 
+/* ============================================================
+    VERIFICAR SE A MESA ESTÁ EM PEDIDO ATIVO
+============================================================ */
+export async function verificarMesaPedido(numero_mesa) {
+  console.log("verificarMesaPedido()");
   const db = await conn();
   return new Promise((resolve, reject) => {
     const query = `SELECT * FROM tb_Pedidos WHERE mesa_numero = ?`;
-    db.all(query, [numero_mesa], (err, row) => {
-      if (err) {
-        console.error("Erro ao verificar mesa:", err);
-        reject(err);
-      } else {
-        resolve(row);
-      }
+    db.all(query, [numero_mesa], (err, rows) => {
+      db.close();
+      if (err) reject(err);
+      else resolve(rows);
     });
   });
-
 }
 
-export async function mudarStatus(numero_mesa){
-  const ocupado = "Ocupada";
-
-  console.log("entrei no mudar Status!"); 
-  const db =  await conn();
+/* ============================================================
+    MUDAR STATUS PARA OCUPADA
+============================================================ */
+export async function mudarStatus(numero_mesa) {
+  console.log("mudarStatus() → Ocupada");
+  const db = await conn();
 
   return new Promise((resolve, reject) => {
-    const query = `UPDATE tb_Mesas SET status = ? WHERE numero = ?`;
-
-    db.run(query, [ocupado, numero_mesa], function(err) {
-      if (err) {
-        console.error("Erro ao mudar status:", err);
-        reject(err);
-      } else {
-     
-        resolve({ success: true, changes: this.changes });
-      }
-
+    const query = `UPDATE tb_Mesas SET status = 'Ocupada' WHERE numero = ?`;
+    db.run(query, [numero_mesa], function(err) {
       db.close();
+      if (err) reject(err);
+      else resolve({ success: true, changes: this.changes });
     });
-
   });
 }
 
+/* ============================================================
+    ✔ FUNÇÃO QUE ESTAVA FALTANDO:
+       mudarStatusParaLivre()
+============================================================ */
+export async function mudarStatusParaLivre(numero_mesa) {
+  console.log("mudarStatusParaLivre() → Livre");
+
+  const db = await conn();
+  return new Promise((resolve, reject) => {
+    const query = `UPDATE tb_Mesas SET status = 'Livre' WHERE numero = ?`;
+
+    db.run(query, [numero_mesa], function(err) {
+      db.close();
+      if (err) {
+        console.error("Erro ao liberar mesa:", err);
+        reject(err);
+      } else {
+        resolve({ success: true, changes: this.changes });
+      }
+    });
+  });
+}
