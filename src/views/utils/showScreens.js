@@ -19,13 +19,13 @@ window.showScreens = async function (id) {
                 const numeroFormatado = (m.numero < 10) ? `0${m.numero}` : m.numero;
                 card.innerHTML = `
                     <div class="mesa-numero">${numeroFormatado}</div>
-                    <span class="status-badge ${m.status === "Disponivel" ? "disponivel" : "ocupada"}">
+                    <span class="status-badge ${m.status.toLowerCase() === "disponivel" ? "disponivel" : "ocupada"}">
                         ${m.status}
                     </span>
                 `; 
 
                card.addEventListener("click", async () => {
-                    if (m.status === 'Disponivel') {
+                    if (m.status.toLowerCase() === 'disponivel') {
                         console.log("evento disparado enviado");
 
                         const dados = {

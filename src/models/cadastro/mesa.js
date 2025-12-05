@@ -1,4 +1,4 @@
-import { conn } from '../../database/db/conn.js';
+import { conn } from "../../database/db/conn.js";
 
 console.log("models/mesa carregado!");
 
@@ -19,7 +19,7 @@ export async function cadastrarMesa(numero_mesa, status, n_cadeiras) {
 
     await new Promise((resolve, reject) => {
       const query = `INSERT INTO tb_Mesas (numero, status, n_cadeiras) VALUES (?, ?, ?)`;
-      db.run(query, [numero_mesa, status, n_cadeiras], function(err) {
+      db.run(query, [numero_mesa, status, n_cadeiras], function (err) {
         if (err) {
           console.error("Erro ao cadastrar mesa:", err);
           reject(err);
@@ -97,7 +97,7 @@ export async function mudarStatus(numero_mesa) {
 
   return new Promise((resolve, reject) => {
     const query = `UPDATE tb_Mesas SET status = 'Ocupada' WHERE numero = ?`;
-    db.run(query, [numero_mesa], function(err) {
+    db.run(query, [numero_mesa], function (err) {
       db.close();
       if (err) reject(err);
       else resolve({ success: true, changes: this.changes });
@@ -110,13 +110,13 @@ export async function mudarStatus(numero_mesa) {
        mudarStatusParaLivre()
 ============================================================ */
 export async function mudarStatusParaLivre(numero_mesa) {
-  console.log("mudarStatusParaLivre() → Livre");
+  console.log("mudarStatusParaLivre() → disponivel");
 
   const db = await conn();
   return new Promise((resolve, reject) => {
-    const query = `UPDATE tb_Mesas SET status = 'Livre' WHERE numero = ?`;
+    const query = `UPDATE tb_Mesas SET status = 'disponivel' WHERE numero = ?`;
 
-    db.run(query, [numero_mesa], function(err) {
+    db.run(query, [numero_mesa], function (err) {
       db.close();
       if (err) {
         console.error("Erro ao liberar mesa:", err);
