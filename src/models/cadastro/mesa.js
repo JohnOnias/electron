@@ -79,7 +79,7 @@ export async function verificarMesaPedido(numero_mesa) {
   console.log("verificarMesaPedido()");
   const db = await conn();
   return new Promise((resolve, reject) => {
-    const query = `SELECT * FROM tb_Pedidos WHERE mesa_numero = ?`;
+    const query = `SELECT * FROM tb_Pedidos WHERE mesa_numero = ? and status = 'Aberto'`;
     db.all(query, [numero_mesa], (err, rows) => {
       db.close();
       if (err) reject(err);
